@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from .models import User, Department, Specialization, Level, StudentProfile, TeacherProfile
 from courses.models import Course, TeacherCourse
 
@@ -25,34 +27,52 @@ def register(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name', '').strip()
         last_name  = request.POST.get('last_name', '').strip()
-        email      = request.POST.get('email', '').strip()
+        email      = request.POST.get('email', '').strip().lower()
         password   = request.POST.get('password', '')
         confirm    = request.POST.get('confirm_password', '')
         role       = request.POST.get('role', 'student')
 
+        # --- Validations ---
+        if not first_name or not last_name:
+            messages.error(request, 'Veuillez renseigner votre nom et prenom.')
+            return render(request, 'accounts/register.html', {'role': role})
+
         if password != confirm:
             messages.error(request, 'Les mots de passe ne correspondent pas.')
-            return render(request, 'accounts/register.html')
+            return render(request, 'accounts/register.html', {'role': role})
 
         if User.objects.filter(email=email).exists():
             messages.error(request, 'Un compte avec cet email existe deja.')
-            return render(request, 'accounts/register.html')
+            return render(request, 'accounts/register.html', {'role': role})
 
         if role not in ['student', 'teacher']:
             messages.error(request, 'Role invalide.')
-            return render(request, 'accounts/register.html')
+            return render(request, 'accounts/register.html', {'role': role})
 
-        user = User.objects.create_user(
-            username   = email,
-            email      = email,
-            password   = password,
-            first_name = first_name,
-            last_name  = last_name,
-            role       = role,
-        )
-        
+        # --- Validation du mot de passe ---
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            for err in e.messages:
+                messages.error(request, err)
+            return render(request, 'accounts/register.html', {'role': role})
+
+        # --- Création du compte ---
+        try:
+            user = User.objects.create_user(
+                username   = email,   # username = email (unique)
+                email      = email,
+                password   = password,
+                first_name = first_name,
+                last_name  = last_name,
+                role       = role,
+            )
+        except Exception as e:
+            messages.error(request, f'Erreur lors de la creation du compte : {e}')
+            return render(request, 'accounts/register.html', {'role': role})
+
+        # --- Connexion automatique ---
         user.backend = 'django.contrib.auth.backends.ModelBackend'
-
         login(request, user)
         messages.success(request, 'Compte cree avec succes. Completez votre profil.')
 
@@ -74,12 +94,14 @@ def login_view(request):
 
         user = None
 
+        # Chercher par email d'abord
         try:
-            user_obj = User.objects.get(email=identifier)
+            user_obj = User.objects.get(email=identifier.lower())
             user = authenticate(request, username=user_obj.username, password=password)
         except User.DoesNotExist:
             pass
 
+        # Fallback: login direct par username
         if user is None:
             user = authenticate(request, username=identifier, password=password)
 
@@ -104,41 +126,62 @@ def complete_profile_student(request):
     if request.user.role != 'student':
         return redirect_by_role(request.user)
 
+    # Profil déjà complété → dashboard
     if hasattr(request.user, 'student_profile'):
         return redirect('student_dashboard')
 
     departments = Department.objects.all()
-    levels      = Level.objects.all()
+    levels      = Level.objects.all().order_by('order')
 
     if request.method == 'POST':
-        dept_id  = request.POST.get('department')
-        level_id = request.POST.get('level')
-        spec_id  = request.POST.get('specialization')
+        dept_id  = request.POST.get('department', '').strip()
+        level_id = request.POST.get('level', '').strip()
+        spec_id  = request.POST.get('specialization', '').strip()
 
-        print("dept:", dept_id)
-        print("level:", level_id)
-        print("spec:", spec_id)
+        ctx = {'departments': departments, 'levels': levels,
+               'sel_dept': dept_id, 'sel_level': level_id, 'sel_spec': spec_id}
 
-        if not dept_id or not level_id or not spec_id:
-            messages.error(request, 'Veuillez remplir tous les champs.')
-            return render(request, 'accounts/complete_profile_student.html', {
-                'departments': departments, 'levels': levels
-            })
+        if not dept_id or not level_id:
+            messages.error(request, 'Veuillez choisir un departement et un niveau.')
+            return render(request, 'accounts/complete_profile_student.html', ctx)
+
+        # La spécialisation est optionnelle si le département n'en a pas
+        has_specs = Specialization.objects.filter(department_id=dept_id).exists()
+        if has_specs and not spec_id:
+            messages.error(request, 'Veuillez choisir une specialisation.')
+            return render(request, 'accounts/complete_profile_student.html', ctx)
+
+        # Vérifications FK
+        try:
+            dept  = Department.objects.get(pk=dept_id)
+            level = Level.objects.get(pk=level_id)
+        except (Department.DoesNotExist, Level.DoesNotExist):
+            messages.error(request, 'Departement ou niveau invalide.')
+            return render(request, 'accounts/complete_profile_student.html', ctx)
+
+        spec = None
+        if spec_id:
+            try:
+                spec = Specialization.objects.get(pk=spec_id, department=dept)
+            except Specialization.DoesNotExist:
+                messages.error(request, 'Specialisation invalide pour ce departement.')
+                return render(request, 'accounts/complete_profile_student.html', ctx)
 
         StudentProfile.objects.create(
-            user              = request.user,
-            department_id     = dept_id,
-            level_id          = level_id,
-            specialization_id = spec_id,
+            user           = request.user,
+            department     = dept,
+            level          = level,
+            specialization = spec,
         )
 
-        messages.success(request, 'Profil complete avec succes.')
+        messages.success(request, 'Profil complete avec succes. Bienvenue !')
         return redirect('student_dashboard')
 
     return render(request, 'accounts/complete_profile_student.html', {
         'departments': departments,
         'levels':      levels,
     })
+
 
 @login_required
 def complete_profile_teacher(request):
@@ -149,22 +192,23 @@ def complete_profile_teacher(request):
         return redirect('teacher_dashboard')
 
     departments = Department.objects.all()
-    levels      = Level.objects.all()
-    courses     = Course.objects.filter(is_active=True)
+    levels      = Level.objects.all().order_by('order')
+    courses     = Course.objects.filter(is_active=True).select_related('department', 'level')
 
     if request.method == 'POST':
-        dept_ids = request.POST.getlist('departments')
+        dept_ids   = request.POST.getlist('departments')
+        course_ids = request.POST.getlist('courses')
 
         if not dept_ids:
             messages.error(request, 'Veuillez selectionner au moins un departement.')
             return render(request, 'accounts/complete_profile_teacher.html', {
-                'departments': departments, 'levels': levels, 'courses': courses
+                'departments': departments, 'levels': levels, 'courses': courses,
+                'sel_depts': dept_ids, 'sel_courses': course_ids,
             })
 
         profile = TeacherProfile.objects.create(user=request.user)
         profile.departments.set(dept_ids)
 
-        course_ids = request.POST.getlist('courses')
         for course_id in course_ids:
             try:
                 course = Course.objects.get(pk=course_id)
@@ -175,7 +219,7 @@ def complete_profile_teacher(request):
             except Course.DoesNotExist:
                 pass
 
-        messages.success(request, 'Profil complete avec succes.')
+        messages.success(request, 'Profil complete avec succes. Bienvenue !')
         return redirect('teacher_dashboard')
 
     return render(request, 'accounts/complete_profile_teacher.html', {
@@ -230,17 +274,16 @@ def student_dashboard(request):
 # ── Helper ────────────────────────────────────────────────────────────────────
 
 def redirect_by_role(user):
+    if user.role == 'admin':
+        return redirect('admin_dashboard')
     if not user.has_completed_profile():
         if user.role == 'student':
             return redirect('complete_profile_student')
         elif user.role == 'teacher':
             return redirect('complete_profile_teacher')
-    if user.role == 'admin':
-        return redirect('admin_dashboard')
-    elif user.role == 'teacher':
+    if user.role == 'teacher':
         return redirect('teacher_dashboard')
-    else:
-        return redirect('student_dashboard')
+    return redirect('student_dashboard')
 
 
 # ── API ───────────────────────────────────────────────────────────────────────

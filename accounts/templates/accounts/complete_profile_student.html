@@ -1,12 +1,6 @@
 {% extends 'accounts/base.html' %}
 {% block title %}Completer mon profil{% endblock %}
 
-{% block extra_css %}
-<style>
-    #specialization-container { display: none; }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="d-flex justify-content-center">
 <div class="card-dark p-4" style="width:100%; max-width:480px;">
@@ -15,7 +9,16 @@
         Ces informations determinent les enseignants que vous pouvez evaluer.
     </p>
 
-    <form method="POST">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" id="profile-form">
         {% csrf_token %}
 
         <div class="mb-3">
@@ -23,7 +26,9 @@
             <select name="department" id="dept-select" class="form-select" required>
                 <option value="">-- Choisir un departement --</option>
                 {% for dept in departments %}
-                    <option value="{{ dept.pk }}">{{ dept.name }}</option>
+                    <option value="{{ dept.pk }}" {% if sel_dept == dept.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ dept.name }}
+                    </option>
                 {% endfor %}
             </select>
         </div>
@@ -33,19 +38,23 @@
             <select name="level" class="form-select" required>
                 <option value="">-- Choisir un niveau --</option>
                 {% for level in levels %}
-                    <option value="{{ level.pk }}">{{ level.name }}</option>
+                    <option value="{{ level.pk }}" {% if sel_level == level.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ level.name }}
+                    </option>
                 {% endfor %}
             </select>
         </div>
 
-        <div class="mb-4" id="specialization-container">
+        <div class="mb-4" id="specialization-container" style="display:none;">
             <label class="form-label">Specialisation</label>
             <select name="specialization" id="spec-select" class="form-select">
                 <option value="">-- Choisir une specialisation --</option>
             </select>
         </div>
 
-        <button type="submit" class="btn-primary-custom w-100 text-center">Enregistrer mon profil</button>
+        <button type="submit" class="btn-primary-custom w-100 text-center">
+            Enregistrer mon profil
+        </button>
     </form>
 </div>
 </div>
@@ -53,12 +62,15 @@
 
 {% block extra_js %}
 <script>
-const deptSelect = document.getElementById('dept-select');
-const specSelect = document.getElementById('spec-select');
+const deptSelect  = document.getElementById('dept-select');
+const specSelect  = document.getElementById('spec-select');
 const specContainer = document.getElementById('specialization-container');
 
-deptSelect.addEventListener('change', function () {
-    const deptId = this.value;
+// Valeurs pré-selectionnées (en cas d'erreur de formulaire)
+const preselectedDept = "{{ sel_dept|default:'' }}";
+const preselectedSpec = "{{ sel_spec|default:'' }}";
+
+function loadSpecializations(deptId, preselectId) {
     specSelect.innerHTML = '<option value="">-- Choisir une specialisation --</option>';
     specContainer.style.display = 'none';
 
@@ -72,11 +84,26 @@ deptSelect.addEventListener('change', function () {
                     const opt = document.createElement('option');
                     opt.value = spec.id;
                     opt.textContent = spec.name;
+                    if (String(spec.id) === String(preselectId)) {
+                        opt.selected = true;
+                    }
                     specSelect.appendChild(opt);
                 });
                 specContainer.style.display = 'block';
             }
+        })
+        .catch(() => {
+            console.error('Erreur chargement specialisations');
         });
+}
+
+deptSelect.addEventListener('change', function () {
+    loadSpecializations(this.value, '');
 });
+
+// Au chargement de la page : restaurer la selection si erreur
+if (preselectedDept) {
+    loadSpecializations(preselectedDept, preselectedSpec);
+}
 </script>
 {% endblock %}
