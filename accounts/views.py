@@ -50,6 +50,8 @@ def register(request):
             last_name  = last_name,
             role       = role,
         )
+        
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
 
         login(request, user)
         messages.success(request, 'Compte cree avec succes. Completez votre profil.')
