@@ -1,0 +1,17 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Tableau de bord Etudiant{% endblock %}
+
+{% block nav_links %}
+    <a href="{% url 'student_dashboard' %}" class="nav-link-custom active">Dashboard</a>
+{% endblock %}
+
+{% block content %}
+<div class="card-dark p-4 mb-4">
+    <h2 style="font-size:1.3rem; font-weight:700;">
+        Bienvenue, {{ request.user.get_full_name|default:request.user.username }} 👋
+    </h2>
+    <p style="color:#94a3b8; margin:0; font-size:0.9rem;">
+        Selectionnez un enseignant pour commencer votre evaluation.
+    </p>
+</div>
+{% endblock %}

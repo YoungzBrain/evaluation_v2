@@ -1,0 +1,48 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Tableau de bord Admin{% endblock %}
+
+{% block nav_links %}
+    <a href="{% url 'admin_dashboard' %}" class="nav-link-custom active">Dashboard</a>
+{% endblock %}
+
+{% block content %}
+<div class="welcome-card card-dark p-4 mb-4">
+    <h2 style="font-size:1.3rem; font-weight:700;">
+        Bienvenue, {{ request.user.get_full_name|default:request.user.username }} 👋
+    </h2>
+    <p style="color:#94a3b8; margin:0; font-size:0.9rem;">
+        Tableau de bord administrateur — gerez la plateforme depuis ici.
+    </p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card-dark p-4 text-center">
+            <div style="font-size:2rem;">🏛️</div>
+            <div style="font-size:2rem; font-weight:700; color:#6366f1;">{{ total_departments }}</div>
+            <div style="color:#94a3b8; font-size:0.875rem;">Departements</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-dark p-4 text-center">
+            <div style="font-size:2rem;">👨‍🏫</div>
+            <div style="font-size:2rem; font-weight:700; color:#10b981;">{{ total_teachers }}</div>
+            <div style="color:#94a3b8; font-size:0.875rem;">Enseignants</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-dark p-4 text-center">
+            <div style="font-size:2rem;">🎓</div>
+            <div style="font-size:2rem; font-weight:700; color:#f59e0b;">{{ total_students }}</div>
+            <div style="color:#94a3b8; font-size:0.875rem;">Etudiants</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-dark p-4 text-center">
+            <div style="font-size:2rem;">📚</div>
+            <div style="font-size:2rem; font-weight:700; color:#0891b2;">{{ total_courses }}</div>
+            <div style="color:#94a3b8; font-size:0.875rem;">Matieres</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Completer mon profil{% endblock %}
+
+{% block extra_css %}
+<style>
+    #specialization-container { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+<div class="card-dark p-4" style="width:100%; max-width:480px;">
+    <h4 class="mb-1" style="font-weight:700;">Completer mon profil</h4>
+    <p style="color:#94a3b8; font-size:0.875rem; margin-bottom:1.5rem;">
+        Ces informations determinent les enseignants que vous pouvez evaluer.
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Departement</label>
+            <select name="department" id="dept-select" class="form-select" required>
+                <option value="">-- Choisir un departement --</option>
+                {% for dept in departments %}
+                    <option value="{{ dept.pk }}">{{ dept.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Niveau</label>
+            <select name="level" class="form-select" required>
+                <option value="">-- Choisir un niveau --</option>
+                {% for level in levels %}
+                    <option value="{{ level.pk }}">{{ level.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4" id="specialization-container">
+            <label class="form-label">Specialisation</label>
+            <select name="specialization" id="spec-select" class="form-select">
+                <option value="">-- Choisir une specialisation --</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-primary-custom w-100 text-center">Enregistrer mon profil</button>
+    </form>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const deptSelect = document.getElementById('dept-select');
+const specSelect = document.getElementById('spec-select');
+const specContainer = document.getElementById('specialization-container');
+
+deptSelect.addEventListener('change', function () {
+    const deptId = this.value;
+    specSelect.innerHTML = '<option value="">-- Choisir une specialisation --</option>';
+    specContainer.style.display = 'none';
+
+    if (!deptId) return;
+
+    fetch(`/api/specializations/?department=${deptId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.length > 0) {
+                data.forEach(spec => {
+                    const opt = document.createElement('option');
+                    opt.value = spec.id;
+                    opt.textContent = spec.name;
+                    specSelect.appendChild(opt);
+                });
+                specContainer.style.display = 'block';
+            }
+        });
+});
+</script>
+{% endblock %}
