@@ -1,0 +1,176 @@
+{% extends 'evaluations/student/base_student.html' %}
+{% block title %}Formulaire d'évaluation{% endblock %}
+
+{% block student_extra_css %}
+<style>
+    .progress-bar-custom {
+        height: 4px; background: #1e293b; border-radius: 999px; margin-bottom: 1.5rem; overflow: hidden;
+    }
+    .progress-bar-custom .fill { height: 100%; background: #6366f1; transition: width 0.3s; }
+    .submit-btn-area {
+        position: sticky; bottom: 0; background: #0f172a;
+        border-top: 1px solid #334155; padding: 1rem 0 0.5rem;
+        margin-top: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block student_content %}
+
+<!-- Étapes -->
+<div class="steps-bar">
+    <div class="step done"><div class="step-num">✓</div> Enseignant</div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="step-num">✓</div> Cours</div>
+    <div class="step-line done"></div>
+    <div class="step active"><div class="step-num">3</div> Évaluation</div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-num">4</div> Confirmation</div>
+</div>
+
+<!-- En-tête -->
+<div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; flex-wrap:wrap;">
+    <a href="{% url 'evaluation_course_select' teacher.pk %}" style="color:#6366f1; font-size:0.85rem;">← Retour</a>
+    <div>
+        <h2 style="font-size:1.1rem; font-weight:700; margin:0;">{{ teacher.get_full_name|default:teacher.username }}</h2>
+        <span style="font-size:0.82rem; color:#64748b;">
+            {{ course.name }} · {{ course.level }}
+            {% if course.is_general %}
+                <span class="badge-sm badge-general" style="margin-left:0.3rem;">Général</span>
+            {% else %}
+                <span class="badge-sm badge-specialized" style="margin-left:0.3rem;">{{ course.specialization }}</span>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+<!-- Messages d'erreur -->
+{% if messages %}
+<div class="card-dark p-3 mb-3" style="border-color:#ef4444;">
+    {% for msg in messages %}
+    <div style="color:#fca5a5; font-size:0.85rem;">⚠ {{ msg }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Barre de progression -->
+<div class="progress-bar-custom">
+    <div class="fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<!-- Formulaire -->
+<form method="POST" id="evalForm" novalidate>
+    {% csrf_token %}
+
+    {% for q in questions %}
+    <div class="question-block" id="q-block-{{ q.pk }}" data-type="{{ q.type }}">
+        <div class="question-text">
+            <span style="color:#6366f1; font-size:0.8rem; font-weight:600; margin-right:0.4rem;">
+                Q{{ forloop.counter }}
+            </span>
+            {{ q.text }}
+            {% if q.type == 'scored' %}
+                <span style="color:#ef4444; font-size:0.85rem;"> *</span>
+            {% endif %}
+        </div>
+
+        {% if q.type == 'scored' %}
+            <!-- Star picker -->
+            <input type="hidden" name="question_{{ q.pk }}"
+                   id="score-{{ q.pk }}"
+                   value="{{ post_data|default:'' }}">
+
+            <div class="star-rating" data-question="{{ q.pk }}">
+                {% for i in "12345" %}
+                <button type="button" class="star-btn"
+                        onclick="setScore({{ q.pk }}, {{ forloop.counter }})"
+                        data-val="{{ forloop.counter }}">
+                    {{ forloop.counter }}
+                </button>
+                {% endfor %}
+            </div>
+            <div style="font-size:0.75rem; color:#475569; margin-top:0.4rem;"
+                 id="label-{{ q.pk }}">
+                Sélectionnez une note de 1 (très insuffisant) à 5 (excellent)
+            </div>
+
+        {% else %}
+            <!-- Réponse ouverte -->
+            <textarea name="question_{{ q.pk }}"
+                      class="open-answer"
+                      rows="3"
+                      placeholder="Votre réponse (optionnel)…"
+                      oninput="updateProgress()">{{ post_data|default:'' }}</textarea>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- Zone submit sticky -->
+    <div class="submit-btn-area">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+            <span style="font-size:0.82rem; color:#64748b;" id="progressLabel">
+                0 / {{ questions|length }} question(s) répondue(s)
+            </span>
+            <button type="submit" class="btn-primary-custom" id="submitBtn" disabled>
+                Soumettre l'évaluation
+            </button>
+        </div>
+        <p style="font-size:0.75rem; color:#475569; margin-top:0.5rem; margin-bottom:0;">
+            ⚠ Une fois soumise, l'évaluation ne peut plus être modifiée.
+        </p>
+    </div>
+</form>
+
+<script>
+const SCORE_LABELS = {
+    1: '1 — Très insuffisant',
+    2: '2 — Insuffisant',
+    3: '3 — Passable',
+    4: '4 — Bien',
+    5: '5 — Excellent',
+};
+
+const scoredQuestions = [
+    {% for q in questions %}{% if q.type == 'scored' %}{{ q.pk }},{% endif %}{% endfor %}
+];
+const totalRequired = scoredQuestions.length;
+const filledScores  = {};
+
+function setScore(questionPk, val) {
+    filledScores[questionPk] = val;
+    document.getElementById(`score-${questionPk}`).value = val;
+    document.getElementById(`label-${questionPk}`).textContent = SCORE_LABELS[val];
+
+    // Mettre en surbrillance les boutons
+    const btns = document.querySelectorAll(`.star-rating[data-question="${questionPk}"] .star-btn`);
+    btns.forEach(btn => {
+        btn.classList.toggle('selected', parseInt(btn.dataset.val) <= val);
+    });
+
+    updateProgress();
+}
+
+function updateProgress() {
+    const filled = Object.keys(filledScores).length;
+    const pct    = totalRequired > 0 ? Math.round(filled / totalRequired * 100) : 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent =
+        `${filled} / ${totalRequired} note(s) saisie(s)`;
+    document.getElementById('submitBtn').disabled = (filled < totalRequired);
+}
+
+// Restaurer les valeurs en cas d'erreur POST
+{% for q in questions %}
+{% if q.type == 'scored' %}
+(function() {
+    const saved = "{{ post_data|default:'' }}";  // placeholder — voir note ci-dessous
+    const hiddenVal = document.getElementById('score-{{ q.pk }}').value;
+    if (hiddenVal) { setScore({{ q.pk }}, parseInt(hiddenVal)); }
+})();
+{% endif %}
+{% endfor %}
+
+updateProgress();
+</script>
+
+{% endblock %}

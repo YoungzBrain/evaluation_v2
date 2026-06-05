@@ -1,0 +1,55 @@
+{% extends 'evaluations/student/base_student.html' %}
+{% block title %}Choisir un cours{% endblock %}
+
+{% block student_content %}
+
+<!-- Étapes -->
+<div class="steps-bar">
+    <div class="step done"><div class="step-num">✓</div> Enseignant</div>
+    <div class="step-line done"></div>
+    <div class="step active"><div class="step-num">2</div> Cours</div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-num">3</div> Évaluation</div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-num">4</div> Confirmation</div>
+</div>
+
+<div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+    <a href="{% url 'evaluation_teacher_list' %}" style="color:#6366f1; font-size:0.85rem;">← Retour</a>
+    <h2 style="font-size:1.2rem; font-weight:700; margin:0;">
+        Cours de {{ teacher.get_full_name|default:teacher.username }}
+    </h2>
+</div>
+
+<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1rem;">
+{% for item in courses_data %}
+    {% if item.evaluated %}
+    <div class="eval-card done">
+    {% else %}
+    <a href="{% url 'evaluation_form' teacher.pk item.course.pk %}" class="eval-card">
+    {% endif %}
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div style="font-weight:700; font-size:0.95rem; color:#f1f5f9; margin-bottom:0.4rem;">
+                {{ item.course.name }}
+            </div>
+            {% if item.evaluated %}
+                <span style="background:#064e3b; color:#6ee7b7; padding:0.2rem 0.6rem;
+                             border-radius:999px; font-size:0.72rem; font-weight:600;">
+                    ✓ Fait
+                </span>
+            {% endif %}
+        </div>
+        <div style="font-size:0.82rem; color:#64748b; display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:0.4rem;">
+            <span>{{ item.course.level }}</span>
+            <span>·</span>
+            {% if item.course.is_general %}
+                <span class="badge-sm badge-general">Général</span>
+            {% else %}
+                <span class="badge-sm badge-specialized">{{ item.course.specialization }}</span>
+            {% endif %}
+        </div>
+    {% if item.evaluated %}</div>{% else %}</a>{% endif %}
+{% endfor %}
+</div>
+
+{% endblock %}

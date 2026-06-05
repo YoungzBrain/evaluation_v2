@@ -1,0 +1,74 @@
+{% extends 'accounts/base.html' %}
+
+{% block nav_links %}
+    <a href="{% url 'student_dashboard' %}"
+       class="nav-link-custom {% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
+        Dashboard
+    </a>
+    <a href="{% url 'evaluation_teacher_list' %}"
+       class="nav-link-custom {% if 'evaluation' in request.resolver_match.url_name %}active{% endif %}">
+        Évaluer
+    </a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ── Barre de progression étapes ── */
+    .steps-bar {
+        display: flex; align-items: center; gap: 0; margin-bottom: 1.75rem;
+    }
+    .step {
+        display: flex; align-items: center; gap: 0.5rem;
+        font-size: 0.82rem; font-weight: 600; color: #475569;
+    }
+    .step.active  { color: #6366f1; }
+    .step.done    { color: #10b981; }
+    .step-num {
+        width: 24px; height: 24px; border-radius: 50%;
+        background: #1e293b; border: 2px solid #334155;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+    }
+    .step.active .step-num  { background: #6366f1; border-color: #6366f1; color: #fff; }
+    .step.done .step-num    { background: #10b981; border-color: #10b981; color: #fff; }
+    .step-line {
+        flex: 1; height: 2px; background: #334155; min-width: 2rem; max-width: 4rem;
+    }
+    .step-line.done { background: #10b981; }
+
+    /* ── Cards enseignants / cours ── */
+    .eval-card {
+        background: #1e293b; border: 1px solid #334155; border-radius: 12px;
+        padding: 1.25rem 1.5rem; transition: border-color 0.15s, transform 0.15s;
+        text-decoration: none; display: block; color: inherit;
+    }
+    .eval-card:hover { border-color: #6366f1; transform: translateY(-1px); color: inherit; }
+    .eval-card.done  { border-color: #10b981; opacity: 0.65; pointer-events: none; }
+
+    /* ── Formulaire questions ── */
+    .question-block {
+        background: #1e293b; border: 1px solid #334155; border-radius: 10px;
+        padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+    }
+    .question-text { font-size: 0.95rem; font-weight: 600; color: #f1f5f9; margin-bottom: 0.75rem; }
+    .star-rating    { display: flex; gap: 0.5rem; }
+    .star-btn {
+        background: #0f172a; border: 2px solid #334155; border-radius: 8px;
+        padding: 0.4rem 0.7rem; font-size: 1.1rem; cursor: pointer;
+        transition: all 0.12s; color: #475569;
+    }
+    .star-btn.selected, .star-btn:hover { background: #1e3a5f; border-color: #6366f1; color: #fbbf24; }
+    .open-answer { background: #0f172a; border: 1px solid #334155; color: #f1f5f9;
+                   border-radius: 8px; width: 100%; padding: 0.6rem 0.8rem;
+                   font-size: 0.9rem; resize: vertical; }
+    .open-answer:focus { outline: none; border-color: #6366f1; }
+    .badge-general    { background: #1e3a5f; color: #93c5fd; }
+    .badge-specialized{ background: #2d1b69; color: #c4b5fd; }
+    .badge-sm { padding: 0.2rem 0.55rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
+</style>
+{% block student_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+{% block student_content %}{% endblock %}
+{% endblock %}

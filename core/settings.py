@@ -132,3 +132,6 @@ STATIC_URL = 'static/'
 LOGIN_URL          = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
+# Media files (PDF, uploads)
+MEDIA_URL  = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
