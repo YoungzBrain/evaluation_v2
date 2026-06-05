@@ -1,0 +1,29 @@
+{% extends 'accounts/admin/base_admin.html' %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block admin_content %}
+<div style="max-width:520px; margin:2rem auto;">
+<div class="card-dark p-4">
+    <h4 style="font-weight:700; color:#ef4444; margin-bottom:0.5rem;">⚠️ {{ page_title }}</h4>
+    <p style="color:#94a3b8; margin-bottom:0.5rem;">
+        Confirmez-vous la suppression de cette question ?
+    </p>
+    <div style="background:#1e293b; border-left:3px solid #ef4444; padding:0.75rem 1rem;
+                border-radius:6px; margin-bottom:1.25rem; color:#f1f5f9; font-size:0.9rem;">
+        « {{ object_name }} »
+    </div>
+    <p style="color:#ef4444; font-size:0.82rem; margin-bottom:1.5rem;">
+        Cette action est irréversible. Toutes les réponses liées à cette question seront aussi supprimées.
+    </p>
+    <form method="POST" class="d-flex gap-3">
+        {% csrf_token %}
+        <button type="submit" class="btn-action btn-delete" style="padding:0.5rem 1.2rem;">
+            Supprimer
+        </button>
+        <a href="{% url 'question_list' %}" class="btn-action btn-edit" style="padding:0.5rem 1.2rem;">
+            Annuler
+        </a>
+    </form>
+</div>
+</div>
+{% endblock %}

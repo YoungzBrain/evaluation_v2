@@ -1,0 +1,101 @@
+{% extends 'accounts/admin/base_admin.html' %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block admin_extra_css %}
+<style>
+    .type-selector {
+        display: flex; gap: 1rem; margin-top: 0.5rem;
+    }
+    .type-card {
+        flex: 1; border: 2px solid #334155; border-radius: 10px; padding: 1rem;
+        cursor: pointer; transition: border-color 0.15s, background 0.15s;
+        text-align: center;
+    }
+    .type-card:hover { border-color: #6366f1; }
+    .type-card.selected { border-color: #6366f1; background: #1e1b4b22; }
+    .type-card .type-icon { font-size: 1.6rem; }
+    .type-card .type-label { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin-top: 0.3rem; }
+    .type-card .type-desc  { font-size: 0.78rem; color: #64748b; margin-top: 0.2rem; }
+    .char-count { font-size: 0.75rem; color: #475569; text-align: right; margin-top: 0.25rem; }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<div style="max-width:620px;">
+<div class="admin-page-header">
+    <h2>❓ {{ page_title }}</h2>
+    <a href="{% url 'question_list' %}" class="btn-action btn-edit">← Retour</a>
+</div>
+
+<div class="card-dark p-4">
+    <form method="POST" id="questionForm">
+        {% csrf_token %}
+
+        <!-- Texte -->
+        <div class="mb-4">
+            <label class="form-label">
+                Texte de la question <span style="color:#ef4444;">*</span>
+            </label>
+            <textarea name="text" id="questionText" class="form-control" rows="3"
+                      placeholder="ex : L'enseignant explique clairement les concepts..."
+                      required maxlength="1000">{{ form_data.text|default:'' }}</textarea>
+            <div class="char-count"><span id="charCount">0</span> / 1000</div>
+        </div>
+
+        <!-- Type (visuel) -->
+        <div class="mb-4">
+            <label class="form-label">Type de question <span style="color:#ef4444;">*</span></label>
+            <input type="hidden" name="type" id="typeInput" value="{{ form_data.type|default:'scored' }}">
+            <div class="type-selector">
+                <div class="type-card {% if form_data.type != 'open' %}selected{% endif %}"
+                     onclick="selectType('scored')">
+                    <div class="type-icon">⭐</div>
+                    <div class="type-label">Note 1 – 5</div>
+                    <div class="type-desc">L'étudiant attribue une note de 1 à 5</div>
+                </div>
+                <div class="type-card {% if form_data.type == 'open' %}selected{% endif %}"
+                     onclick="selectType('open')">
+                    <div class="type-icon">💬</div>
+                    <div class="type-label">Texte libre</div>
+                    <div class="type-desc">L'étudiant rédige une réponse ouverte</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statut -->
+        <div class="mb-4">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch"
+                       name="is_active" id="isActive"
+                       {% if form_data.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="isActive" style="color:#94a3b8;">
+                    Question active (visible dans les évaluations)
+                </label>
+            </div>
+        </div>
+
+        <div class="d-flex gap-3">
+            <button type="submit" class="btn-primary-custom">{{ action }}</button>
+            <a href="{% url 'question_list' %}" class="btn-action btn-edit" style="padding:0.6rem 1.5rem;">
+                Annuler
+            </a>
+        </div>
+    </form>
+</div>
+</div>
+
+<script>
+function selectType(value) {
+    document.getElementById('typeInput').value = value;
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+}
+
+// Compteur de caractères
+const textarea  = document.getElementById('questionText');
+const charCount = document.getElementById('charCount');
+function updateCount() { charCount.textContent = textarea.value.length; }
+textarea.addEventListener('input', updateCount);
+updateCount();
+</script>
+{% endblock %}
