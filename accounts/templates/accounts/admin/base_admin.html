@@ -1,0 +1,76 @@
+{% extends 'accounts/base.html' %}
+
+{% block nav_links %}
+    <a href="{% url 'admin_dashboard' %}"     class="nav-link-custom {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'department_list' %}"     class="nav-link-custom {% if 'department' in request.resolver_match.url_name %}active{% endif %}">Departements</a>
+    <a href="{% url 'specialization_list' %}" class="nav-link-custom {% if 'specialization' in request.resolver_match.url_name %}active{% endif %}">Specialisations</a>
+    <a href="{% url 'level_list' %}"          class="nav-link-custom {% if 'level' in request.resolver_match.url_name %}active{% endif %}">Niveaux</a>
+    <a href="{% url 'course_list' %}"         class="nav-link-custom {% if 'course' in request.resolver_match.url_name %}active{% endif %}">Matieres</a>
+    <a href="{% url 'teacher_list' %}"        class="nav-link-custom {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}">Enseignants</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+    .admin-page-header h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .table-dark-custom {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table-dark-custom th {
+        background: #1e293b;
+        color: #94a3b8;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #334155;
+        text-align: left;
+    }
+    .table-dark-custom td {
+        padding: 0.875rem 1rem;
+        border-bottom: 1px solid #1e293b;
+        color: #f1f5f9;
+        font-size: 0.9rem;
+        vertical-align: middle;
+    }
+    .table-dark-custom tr:hover td { background: #1e293b33; }
+    .badge-active   { background: #064e3b; color: #6ee7b7; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .badge-inactive { background: #450a0a; color: #fca5a5; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .btn-action {
+        padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.8rem;
+        font-weight: 600; text-decoration: none; border: none; cursor: pointer;
+        display: inline-block; transition: opacity 0.15s;
+    }
+    .btn-action:hover { opacity: 0.85; }
+    .btn-edit   { background: #1d4ed8; color: #fff; }
+    .btn-delete { background: #991b1b; color: #fff; }
+    .btn-toggle-on  { background: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
+    .btn-toggle-off { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
+    .filter-bar {
+        display: flex; align-items: center; gap: 1rem;
+        margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .filter-bar select { max-width: 280px; }
+    .empty-state {
+        text-align: center; padding: 3rem;
+        color: #475569; font-size: 0.9rem;
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+</style>
+{% block admin_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+{% block admin_content %}{% endblock %}
+{% endblock %}

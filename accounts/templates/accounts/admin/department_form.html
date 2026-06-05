@@ -1,0 +1,31 @@
+{% extends 'accounts/admin/base_admin.html' %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block admin_content %}
+<div style="max-width:560px;">
+<div class="admin-page-header">
+    <h2>🏛️ {{ page_title }}</h2>
+    <a href="{% url 'department_list' %}" class="btn-action btn-edit">← Retour</a>
+</div>
+
+<div class="card-dark p-4">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Nom du departement <span style="color:#ef4444;">*</span></label>
+            <input type="text" name="name" class="form-control"
+                   value="{{ object.name|default:'' }}" placeholder="ex : Genie Informatique" required>
+        </div>
+        <div class="mb-4">
+            <label class="form-label">Description <span style="color:#475569;">(optionnel)</span></label>
+            <textarea name="description" class="form-control" rows="3"
+                      placeholder="Description du departement...">{{ object.description|default:'' }}</textarea>
+        </div>
+        <div class="d-flex gap-3">
+            <button type="submit" class="btn-primary-custom">{{ action }}</button>
+            <a href="{% url 'department_list' %}" class="btn-action btn-edit" style="padding:0.6rem 1.5rem;">Annuler</a>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

@@ -1,12 +1,8 @@
-{% extends 'accounts/base.html' %}
+{% extends 'accounts/admin/base_admin.html' %}
 {% block title %}Tableau de bord Admin{% endblock %}
 
-{% block nav_links %}
-    <a href="{% url 'admin_dashboard' %}" class="nav-link-custom active">Dashboard</a>
-{% endblock %}
-
-{% block content %}
-<div class="welcome-card card-dark p-4 mb-4">
+{% block admin_content %}
+<div class="card-dark p-4 mb-4">
     <h2 style="font-size:1.3rem; font-weight:700;">
         Bienvenue, {{ request.user.get_full_name|default:request.user.username }} 👋
     </h2>
@@ -15,20 +11,23 @@
     </p>
 </div>
 
-<div class="row g-3">
+<!-- Stats -->
+<div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card-dark p-4 text-center">
+        <a href="{% url 'department_list' %}" style="text-decoration:none;">
+        <div class="card-dark p-4 text-center" style="transition:border-color 0.2s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#334155'">
             <div style="font-size:2rem;">🏛️</div>
             <div style="font-size:2rem; font-weight:700; color:#6366f1;">{{ total_departments }}</div>
             <div style="color:#94a3b8; font-size:0.875rem;">Departements</div>
-        </div>
+        </div></a>
     </div>
     <div class="col-md-3">
-        <div class="card-dark p-4 text-center">
+        <a href="{% url 'teacher_list' %}" style="text-decoration:none;">
+        <div class="card-dark p-4 text-center" style="transition:border-color 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#334155'">
             <div style="font-size:2rem;">👨‍🏫</div>
             <div style="font-size:2rem; font-weight:700; color:#10b981;">{{ total_teachers }}</div>
             <div style="color:#94a3b8; font-size:0.875rem;">Enseignants</div>
-        </div>
+        </div></a>
     </div>
     <div class="col-md-3">
         <div class="card-dark p-4 text-center">
@@ -38,10 +37,59 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card-dark p-4 text-center">
+        <a href="{% url 'course_list' %}" style="text-decoration:none;">
+        <div class="card-dark p-4 text-center" style="transition:border-color 0.2s;" onmouseover="this.style.borderColor='#0891b2'" onmouseout="this.style.borderColor='#334155'">
             <div style="font-size:2rem;">📚</div>
             <div style="font-size:2rem; font-weight:700; color:#0891b2;">{{ total_courses }}</div>
             <div style="color:#94a3b8; font-size:0.875rem;">Matieres</div>
+        </div></a>
+    </div>
+</div>
+
+<!-- Raccourcis -->
+<h3 style="font-size:1rem; font-weight:600; color:#94a3b8; margin-bottom:1rem; text-transform:uppercase; letter-spacing:0.05em;">
+    Gestion academique
+</h3>
+<div class="row g-3">
+    {% for item in shortcuts %}{% endfor %}
+    <div class="col-md-4">
+        <div class="card-dark p-3">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">🏛️</div>
+            <div style="font-weight:600; margin-bottom:0.25rem;">Departements</div>
+            <div style="color:#475569; font-size:0.8rem; margin-bottom:0.75rem;">Creer et organiser les departements</div>
+            <a href="{% url 'department_list' %}" class="btn-action btn-edit" style="font-size:0.8rem; padding:0.3rem 0.7rem;">Gerer</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-dark p-3">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
+            <div style="font-weight:600; margin-bottom:0.25rem;">Specialisations</div>
+            <div style="color:#475569; font-size:0.8rem; margin-bottom:0.75rem;">Definir les filieres par departement</div>
+            <a href="{% url 'specialization_list' %}" class="btn-action btn-edit" style="font-size:0.8rem; padding:0.3rem 0.7rem;">Gerer</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-dark p-3">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">📊</div>
+            <div style="font-weight:600; margin-bottom:0.25rem;">Niveaux</div>
+            <div style="color:#475569; font-size:0.8rem; margin-bottom:0.75rem;">Annee 1 a Annee 5</div>
+            <a href="{% url 'level_list' %}" class="btn-action btn-edit" style="font-size:0.8rem; padding:0.3rem 0.7rem;">Gerer</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-dark p-3">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">📚</div>
+            <div style="font-weight:600; margin-bottom:0.25rem;">Matieres</div>
+            <div style="color:#475569; font-size:0.8rem; margin-bottom:0.75rem;">Creer et activer les cours</div>
+            <a href="{% url 'course_list' %}" class="btn-action btn-edit" style="font-size:0.8rem; padding:0.3rem 0.7rem;">Gerer</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-dark p-3">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">👨‍🏫</div>
+            <div style="font-weight:600; margin-bottom:0.25rem;">Enseignants</div>
+            <div style="color:#475569; font-size:0.8rem; margin-bottom:0.75rem;">Activer / desactiver des comptes</div>
+            <a href="{% url 'teacher_list' %}" class="btn-action btn-edit" style="font-size:0.8rem; padding:0.3rem 0.7rem;">Gerer</a>
         </div>
     </div>
 </div>
