@@ -14,8 +14,8 @@ from courses.models import Course, TeacherCourse
 def home(request):
     if request.user.is_authenticated:
         return redirect_by_role(request.user)
-    departments = Department.objects.all()
-    return render(request, 'accounts/home.html', {'departments': departments})
+    # Redirect to the enriched public ranking page (Module 6)
+    return redirect('public_ranking')
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -236,16 +236,19 @@ def admin_dashboard(request):
     if not request.user.is_admin():
         return redirect_by_role(request.user)
 
-    total_teachers    = User.objects.filter(role='teacher').count()
-    total_students    = User.objects.filter(role='student').count()
-    total_courses     = Course.objects.count()
-    total_departments = Department.objects.count()
+    from evaluations.models import Evaluation
+    total_teachers      = User.objects.filter(role='teacher').count()
+    total_students      = User.objects.filter(role='student').count()
+    total_courses       = Course.objects.count()
+    total_departments   = Department.objects.count()
+    total_evaluations   = Evaluation.objects.filter(status='submitted').count()
 
     return render(request, 'accounts/admin_dashboard.html', {
         'total_teachers':    total_teachers,
         'total_students':    total_students,
         'total_courses':     total_courses,
         'total_departments': total_departments,
+        'total_evaluations': total_evaluations,
     })
 
 

@@ -1,0 +1,131 @@
+{% extends 'accounts/admin/base_admin.html' %}
+{% block title %}Évaluation #{{ evaluation.pk }}{% endblock %}
+
+{% block admin_extra_css %}
+<style>
+    .meta-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .meta-box {
+        background: #0f172a; border: 1px solid #334155;
+        border-radius: 8px; padding: 0.875rem 1rem;
+    }
+    .meta-box .lbl { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+    .meta-box .val { font-weight: 700; color: #f1f5f9; margin-top: 0.2rem; font-size: 0.95rem; }
+    .score-main {
+        padding: 0.45rem 1.2rem; border-radius: 999px;
+        font-weight: 800; font-size: 1.2rem; display: inline-block;
+    }
+    .score-main.green  { background: #052e16; color: #10b981; }
+    .score-main.amber  { background: #2d1a00; color: #f59e0b; }
+    .score-main.red    { background: #2d0000; color: #ef4444; }
+    .score-main.muted  { background: #1e293b; color: #475569; }
+    .ans-row {
+        background: #1e293b; border: 1px solid #334155;
+        border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 0.6rem;
+    }
+    .ans-q { color: #94a3b8; font-size: 0.875rem; margin-bottom: 0.5rem; }
+    .stars { font-size: 1.2rem; letter-spacing: 0.05em; }
+    .star-filled { color: #f59e0b; }
+    .star-empty  { color: #334155; }
+    .open-text {
+        background: #0f172a; border-left: 3px solid #6366f1;
+        padding: 0.6rem 1rem; border-radius: 0 6px 6px 0;
+        color: #cbd5e1; font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h2>{{ page_title }}</h2>
+    <div class="d-flex gap-2">
+        <a href="{% url 'admin_download_pdf' pk=evaluation.pk %}" class="btn-action btn-toggle-on">⬇ Télécharger PDF</a>
+        <a href="{% url 'admin_evaluation_list' %}" class="btn-action btn-edit">← Retour</a>
+    </div>
+</div>
+
+<!-- Meta info -->
+<div class="meta-grid">
+    <div class="meta-box">
+        <div class="lbl">Enseignant</div>
+        <div class="val">
+            <a href="{% url 'admin_teacher_scores' teacher_pk=evaluation.teacher.pk %}"
+               style="color:#6366f1; text-decoration:none;">
+                {{ evaluation.teacher.get_full_name|default:evaluation.teacher.username }}
+            </a>
+        </div>
+    </div>
+    <div class="meta-box">
+        <div class="lbl">Matière</div>
+        <div class="val">
+            <a href="{% url 'admin_course_detail' teacher_pk=evaluation.teacher.pk course_pk=evaluation.course.pk %}"
+               style="color:#6366f1; text-decoration:none;">
+                {{ evaluation.course.name }}
+            </a>
+        </div>
+    </div>
+    <div class="meta-box">
+        <div class="lbl">Département</div>
+        <div class="val">{{ evaluation.course.department }}</div>
+    </div>
+    <div class="meta-box">
+        <div class="lbl">Étudiant</div>
+        <div class="val" style="color:#94a3b8;">{{ evaluation.student.get_full_name|default:evaluation.student.username }}</div>
+    </div>
+    <div class="meta-box">
+        <div class="lbl">Date soumission</div>
+        <div class="val" style="font-size:0.85rem;">{{ evaluation.created_at|date:"d/m/Y à H:i" }}</div>
+    </div>
+    <div class="meta-box">
+        <div class="lbl">Score global</div>
+        <div class="val">
+            <span class="score-main {{ score_color }}">
+                {% if score_100 %}{{ score_100 }}/100{% else %}—{% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- Scored answers -->
+{% if scored_answers %}
+<h4 style="color:#94a3b8; font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem;">
+    Questions notées
+</h4>
+{% for ans in scored_answers %}
+<div class="ans-row">
+    <div class="ans-q">{{ ans.question.text }}</div>
+    <div>
+        <span class="stars">
+            {% for i in "12345" %}
+                {% if forloop.counter <= ans.score %}
+                    <span class="star-filled">★</span>
+                {% else %}
+                    <span class="star-empty">★</span>
+                {% endif %}
+            {% endfor %}
+        </span>
+        <span style="color:#94a3b8; font-size:0.875rem; margin-left:0.5rem;">{{ ans.score }}/5</span>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- Open answers -->
+{% if open_answers %}
+<h4 style="color:#94a3b8; font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin: 1.25rem 0 0.75rem;">
+    Réponses libres
+</h4>
+{% for ans in open_answers %}
+<div class="ans-row">
+    <div class="ans-q">{{ ans.question.text }}</div>
+    {% if ans.text_answer %}
+        <div class="open-text">{{ ans.text_answer }}</div>
+    {% else %}
+        <div style="color:#475569; font-style:italic; font-size:0.875rem;">Sans réponse</div>
+    {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

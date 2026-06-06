@@ -1,0 +1,137 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Classement des Enseignants{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        text-align: center;
+        padding: 3.5rem 2rem 2.5rem;
+    }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; color: #f1f5f9; margin-bottom: 0.75rem; }
+    .hero p  { color: #94a3b8; font-size: 1rem; max-width: 520px; margin: 0 auto 1.75rem; }
+    .dept-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; }
+    .dept-tab {
+        background: #1e293b; border: 1px solid #334155;
+        border-radius: 8px; padding: 0.4rem 1rem;
+        color: #94a3b8; font-size: 0.85rem; cursor: pointer;
+        text-decoration: none; transition: all 0.2s;
+    }
+    .dept-tab:hover, .dept-tab.active { background: #6366f1; border-color: #6366f1; color: #fff; }
+    .dept-tab.all { background: #0f172a; border-color: #6366f1; color: #a5b4fc; }
+    .dept-tab.all.active, .dept-tab.all:hover { background: #6366f1; color: #fff; }
+
+    .dept-section { margin-bottom: 3rem; }
+    .dept-title {
+        color: #6366f1; font-weight: 700; font-size: 1rem;
+        border-bottom: 1px solid #1e293b;
+        padding-bottom: 0.5rem; margin-bottom: 1rem;
+    }
+    .rank-card {
+        background: #1e293b; border: 1px solid #334155;
+        border-radius: 12px; padding: 1.1rem 1.5rem;
+        margin-bottom: 0.6rem;
+        display: flex; align-items: center; gap: 1rem;
+        transition: border-color 0.2s;
+    }
+    .rank-card:hover { border-color: #334155; }
+    .rank-num {
+        font-size: 1.4rem; font-weight: 800;
+        color: #334155; min-width: 2rem; text-align: center;
+    }
+    .rank-num.gold   { color: #f59e0b; }
+    .rank-num.silver { color: #94a3b8; }
+    .rank-num.bronze { color: #cd7c2e; }
+    .rank-info { flex: 1; }
+    .rank-name { font-weight: 700; color: #f1f5f9; margin-bottom: 0.25rem; font-size: 0.95rem; }
+    .subject-pill {
+        display: inline-block; background: #0f172a;
+        border: 1px solid #334155; border-radius: 6px;
+        padding: 0.15rem 0.55rem; font-size: 0.75rem;
+        color: #94a3b8; margin: 0.1rem;
+    }
+    .subject-pill .s { font-weight: 700; }
+    .subject-pill .s.green  { color: #10b981; }
+    .subject-pill .s.amber  { color: #f59e0b; }
+    .subject-pill .s.red    { color: #ef4444; }
+    .global-badge {
+        padding: 0.4rem 0.9rem; border-radius: 999px;
+        font-weight: 700; font-size: 0.95rem; flex-shrink: 0;
+    }
+    .global-badge.green  { background: #052e16; color: #10b981; border: 1px solid #065f46; }
+    .global-badge.amber  { background: #2d1a00; color: #f59e0b; border: 1px solid #92400e; }
+    .global-badge.red    { background: #2d0000; color: #ef4444; border: 1px solid #7f1d1d; }
+    .empty-dept { color: #475569; font-size: 0.875rem; font-style: italic; padding: 1rem 0; }
+
+    .cta-band {
+        background: #1e293b; border: 1px solid #334155;
+        border-radius: 12px; padding: 1.5rem 2rem;
+        text-align: center; margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>🏆 Classement des Enseignants</h1>
+    <p>Évaluations anonymes des étudiants. Résultats mis à jour en temps réel.</p>
+    {% if not user.is_authenticated %}
+    <div class="d-flex gap-2 justify-content-center">
+        <a href="{% url 'register' %}" class="btn-primary-custom">S'inscrire</a>
+        <a href="{% url 'login' %}"    class="btn-primary-custom" style="background:#334155;">Se connecter</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Dept tabs -->
+<div class="dept-tabs">
+    <a href="{% url 'public_ranking' %}" class="dept-tab all {% if not dept_filter %}active{% endif %}">Tous</a>
+    {% for rd in ranking_data %}
+        <a href="{% url 'public_ranking' %}?dept={{ rd.department.pk }}"
+           class="dept-tab {% if dept_filter == rd.department.pk|stringformat:'s' %}active{% endif %}">
+            {{ rd.department.name }}
+        </a>
+    {% endfor %}
+</div>
+
+<!-- Rankings -->
+{% for rd in ranking_data %}
+    {% if not dept_filter or dept_filter == rd.department.pk|stringformat:"s" %}
+    <div class="dept-section">
+        <div class="dept-title">{{ rd.department.name }}</div>
+
+        {% if rd.teachers %}
+            {% for item in rd.teachers %}
+            <div class="rank-card">
+                <div class="rank-num {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">
+                    #{{ forloop.counter }}
+                </div>
+                <div class="rank-info">
+                    <div class="rank-name">{{ item.teacher.get_full_name|default:item.teacher.username }}</div>
+                    <div>
+                        {% for subj in item.subjects %}
+                        <span class="subject-pill">
+                            {{ subj.name }} — <span class="s {% if subj.score >= 75 %}green{% elif subj.score >= 50 %}amber{% else %}red{% endif %}">{{ subj.score }}/100</span>
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <span class="global-badge {{ item.color }}">{{ item.global_avg }}/100</span>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-dept">Aucune évaluation pour ce département.</div>
+        {% endif %}
+    </div>
+    {% endif %}
+{% empty %}
+    <div style="text-align:center; padding:3rem; color:#475569;">Aucun département configuré.</div>
+{% endfor %}
+
+{% if not user.is_authenticated %}
+<div class="cta-band">
+    <p style="color:#94a3b8; margin-bottom:1rem;">Vous êtes étudiant ? Participez aux évaluations !</p>
+    <a href="{% url 'register' %}" class="btn-primary-custom">Créer un compte</a>
+</div>
+{% endif %}
+
+{% endblock %}

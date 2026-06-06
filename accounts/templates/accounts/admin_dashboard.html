@@ -44,6 +44,14 @@
             <div style="color:#94a3b8; font-size:0.875rem;">Matieres</div>
         </div></a>
     </div>
+    <div class="col-md-3">
+        <a href="{% url 'admin_evaluation_list' %}" style="text-decoration:none;">
+        <div class="card-dark p-4 text-center" style="transition:border-color 0.2s;" onmouseover="this.style.borderColor='#8b5cf6'" onmouseout="this.style.borderColor='#334155'">
+            <div style="font-size:2rem;">📋</div>
+            <div style="font-size:2rem; font-weight:700; color:#8b5cf6;">{{ total_evaluations }}</div>
+            <div style="color:#94a3b8; font-size:0.875rem;">Evaluations</div>
+        </div></a>
+    </div>
 </div>
 
 <!-- Raccourcis -->

@@ -2,7 +2,9 @@
 {% block title %}Tableau de bord Enseignant{% endblock %}
 
 {% block nav_links %}
-    <a href="{% url 'teacher_dashboard' %}" class="nav-link-custom active">Dashboard</a>
+    <a href="{% url 'teacher_dashboard' %}" class="nav-link-custom {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'my_scores' %}" class="nav-link-custom {% if 'score' in request.resolver_match.url_name %}active{% endif %}">Mes Scores</a>
+    <a href="{% url 'public_ranking' %}" class="nav-link-custom">Classement</a>
 {% endblock %}
 
 {% block content %}
@@ -11,7 +13,32 @@
         Bienvenue, {{ request.user.get_full_name|default:request.user.username }} 👋
     </h2>
     <p style="color:#94a3b8; margin:0; font-size:0.9rem;">
-        Vos scores d'evaluation par matiere apparaitront ici.
+        Consultez vos évaluations et scores par matière.
     </p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <a href="{% url 'my_scores' %}" style="text-decoration:none;">
+        <div class="card-dark p-4" style="transition:border-color 0.2s; cursor:pointer;"
+             onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#334155'">
+            <div style="font-size:2rem;">📊</div>
+            <div style="font-weight:700; color:#f1f5f9; margin-top:0.5rem;">Mes Scores</div>
+            <div style="color:#94a3b8; font-size:0.875rem; margin-top:0.3rem;">
+                Voir vos moyennes par matière
+            </div>
+        </div></a>
+    </div>
+    <div class="col-md-6">
+        <a href="{% url 'public_ranking' %}" style="text-decoration:none;">
+        <div class="card-dark p-4" style="transition:border-color 0.2s; cursor:pointer;"
+             onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
+            <div style="font-size:2rem;">🏆</div>
+            <div style="font-weight:700; color:#f1f5f9; margin-top:0.5rem;">Classement Public</div>
+            <div style="color:#94a3b8; font-size:0.875rem; margin-top:0.3rem;">
+                Voir le classement général
+            </div>
+        </div></a>
+    </div>
 </div>
 {% endblock %}

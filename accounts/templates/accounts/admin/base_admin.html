@@ -8,6 +8,7 @@
     <a href="{% url 'course_list' %}"         class="nav-link-custom {% if 'course' in request.resolver_match.url_name %}active{% endif %}">Matieres</a>
     <a href="{% url 'teacher_list' %}"        class="nav-link-custom {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}">Enseignants</a>
     <a href="{% url 'question_list' %}"       class="nav-link-custom {% if 'question' in request.resolver_match.url_name %}active{% endif %}">Questions</a>
+    <a href="{% url 'admin_evaluation_list' %}" class="nav-link-custom {% if 'evaluation' in request.resolver_match.url_name %}active{% endif %}">Evaluations</a>
 {% endblock %}
 
 {% block extra_css %}

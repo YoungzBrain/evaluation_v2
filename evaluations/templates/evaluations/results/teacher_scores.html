@@ -1,0 +1,126 @@
+{% extends 'evaluations/student/base_student.html' %}
+{% block title %}Mes Scores{% endblock %}
+
+{% block student_extra_css %}
+<style>
+    .score-hero {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 14px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+    .score-circle {
+        width: 100px; height: 100px;
+        border-radius: 50%;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        font-weight: 800; flex-shrink: 0;
+        border: 3px solid;
+    }
+    .score-circle.green  { border-color: #10b981; color: #10b981; background: #052e16; }
+    .score-circle.amber  { border-color: #f59e0b; color: #f59e0b; background: #2d1a00; }
+    .score-circle.red    { border-color: #ef4444; color: #ef4444; background: #2d0000; }
+    .score-circle.muted  { border-color: #475569; color: #475569; background: #0f172a; }
+    .score-circle .big   { font-size: 1.6rem; line-height: 1; }
+    .score-circle .label { font-size: 0.65rem; color: #94a3b8; margin-top: 0.2rem; }
+    .course-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        text-decoration: none;
+        transition: border-color 0.2s;
+    }
+    .course-card:hover { border-color: #6366f1; }
+    .course-name { color: #f1f5f9; font-weight: 600; font-size: 0.95rem; }
+    .course-meta { color: #64748b; font-size: 0.78rem; margin-top: 0.25rem; }
+    .score-badge {
+        padding: 0.35rem 1rem;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 1rem;
+        min-width: 70px;
+        text-align: center;
+    }
+    .score-badge.green  { background: #052e16; color: #10b981; border: 1px solid #065f46; }
+    .score-badge.amber  { background: #2d1a00; color: #f59e0b; border: 1px solid #92400e; }
+    .score-badge.red    { background: #2d0000; color: #ef4444; border: 1px solid #7f1d1d; }
+    .score-badge.muted  { background: #1e293b; color: #475569; border: 1px solid #334155; }
+    .eval-count { font-size: 0.8rem; color: #64748b; }
+    .no-evals {
+        text-align: center; padding: 4rem 2rem;
+        color: #475569; background: #1e293b;
+        border: 1px dashed #334155; border-radius: 12px;
+    }
+    .no-evals .icon { font-size: 3rem; margin-bottom: 1rem; }
+</style>
+{% endblock %}
+
+{% block student_content %}
+<div class="admin-page-header">
+    <h2>{{ page_title }}</h2>
+    {% if not is_own %}
+        <a href="{% url 'admin_evaluation_list' %}" class="btn-action btn-edit">← Retour évaluations</a>
+    {% endif %}
+</div>
+
+{% if course_scores %}
+    <!-- Hero global score -->
+    <div class="score-hero">
+        <div class="score-circle {{ global_color }}">
+            <span class="big">
+                {% if global_avg %}{{ global_avg }}{% else %}—{% endif %}
+            </span>
+            <span class="label">/100</span>
+        </div>
+        <div>
+            <div style="font-size:1.1rem; font-weight:700; color:#f1f5f9;">
+                {{ teacher.get_full_name|default:teacher.username }}
+            </div>
+            <div style="color:#64748b; font-size:0.875rem; margin-top:0.3rem;">
+                Score global moyen sur {{ course_scores|length }} matière{{ course_scores|length|pluralize }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Per-course scores -->
+    <h4 style="color:#94a3b8; font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem;">
+        Détail par matière
+    </h4>
+
+    {% for cs in course_scores %}
+        <a href="{% if is_own %}{% url 'my_course_detail' teacher_pk=teacher.pk course_pk=cs.course.pk %}{% else %}{% url 'admin_course_detail' teacher_pk=teacher.pk course_pk=cs.course.pk %}{% endif %}"
+           class="course-card d-block">
+            <div>
+                <div class="course-name">{{ cs.course.name }}</div>
+                <div class="course-meta">
+                    {{ cs.course.department }} — {{ cs.course.level }}
+                    {% if not cs.course.is_general %}· {{ cs.course.specialization }}{% endif %}
+                </div>
+                <div class="eval-count mt-1">{{ cs.nb_evaluations }} évaluation{{ cs.nb_evaluations|pluralize }}</div>
+            </div>
+            <span class="score-badge {{ cs.score_color }}">
+                {% if cs.score_100 %}{{ cs.score_100 }}/100{% else %}—{% endif %}
+            </span>
+        </a>
+    {% endfor %}
+
+{% else %}
+    <div class="no-evals">
+        <div class="icon">📊</div>
+        <p style="font-weight:600; color:#94a3b8;">Aucune évaluation reçue pour le moment.</p>
+        <p style="font-size:0.875rem;">Les scores apparaîtront ici dès que des étudiants soumettront des évaluations.</p>
+    </div>
+{% endif %}
+{% endblock %}

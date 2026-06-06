@@ -1,0 +1,120 @@
+{% extends 'evaluations/student/base_student.html' %}
+{% block title %}Détail — {{ course.name }}{% endblock %}
+
+{% block student_extra_css %}
+<style>
+    .detail-header {
+        background: #1e293b; border: 1px solid #334155;
+        border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .q-card {
+        background: #1e293b; border: 1px solid #334155;
+        border-radius: 10px; padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .q-text { font-weight: 600; color: #f1f5f9; margin-bottom: 0.75rem; font-size: 0.95rem; }
+    .q-avg  { font-size: 1.4rem; font-weight: 800; }
+    .q-avg.green  { color: #10b981; }
+    .q-avg.amber  { color: #f59e0b; }
+    .q-avg.red    { color: #ef4444; }
+    .q-avg.muted  { color: #475569; }
+    /* Distribution bar */
+    .dist-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
+    .dist-label { width: 1.5rem; text-align: right; font-size: 0.8rem; color: #94a3b8; }
+    .dist-bar-wrap { flex: 1; background: #0f172a; border-radius: 999px; height: 10px; overflow: hidden; }
+    .dist-bar { height: 10px; border-radius: 999px; background: #6366f1; transition: width 0.4s; }
+    .dist-count { width: 2rem; font-size: 0.78rem; color: #64748b; }
+    /* Open answers */
+    .open-answer {
+        background: #0f172a; border-left: 3px solid #6366f1;
+        padding: 0.6rem 1rem; border-radius: 0 6px 6px 0;
+        color: #cbd5e1; font-size: 0.875rem; margin-bottom: 0.5rem;
+    }
+    .tag { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .tag-scored { background: #1e3a5f; color: #93c5fd; }
+    .tag-open   { background: #2d1a00; color: #fcd34d; }
+</style>
+{% endblock %}
+
+{% block student_content %}
+<div class="admin-page-header">
+    <h2>{{ page_title }}</h2>
+    <a href="{% if is_own %}{% url 'my_scores' %}{% else %}{% url 'admin_teacher_scores' teacher_pk=teacher.pk %}{% endif %}"
+       class="btn-action btn-edit">← Retour scores</a>
+</div>
+
+<!-- Summary header -->
+<div class="detail-header">
+    <div class="row align-items-center">
+        <div class="col-auto">
+            <div style="font-size:0.75rem; color:#64748b; text-transform:uppercase; letter-spacing:0.05em;">Enseignant</div>
+            <div style="font-weight:700; color:#f1f5f9;">{{ teacher.get_full_name|default:teacher.username }}</div>
+        </div>
+        <div class="col-auto">
+            <div style="font-size:0.75rem; color:#64748b; text-transform:uppercase; letter-spacing:0.05em;">Matière</div>
+            <div style="font-weight:700; color:#6366f1;">{{ course.name }}</div>
+        </div>
+        <div class="col-auto">
+            <div style="font-size:0.75rem; color:#64748b; text-transform:uppercase; letter-spacing:0.05em;">Évaluations</div>
+            <div style="font-weight:700; color:#f1f5f9;">{{ nb_evaluations }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Question stats -->
+<h4 style="color:#94a3b8; font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem;">
+    Résultats par question
+</h4>
+
+{% for qs in question_stats %}
+<div class="q-card">
+    <div class="q-text">
+        <span class="tag {% if qs.question.type == 'scored' %}tag-scored{% else %}tag-open{% endif %} me-2">
+            {% if qs.question.type == 'scored' %}Notée{% else %}Ouverte{% endif %}
+        </span>
+        {{ qs.question.text }}
+    </div>
+
+    {% if qs.question.type == 'scored' %}
+        <div class="d-flex align-items-start gap-4 flex-wrap">
+            <!-- Average -->
+            <div>
+                <div class="q-avg {{ qs.color }}">
+                    {% if qs.score_100 %}{{ qs.score_100 }}<small style="font-size:0.9rem;">/100</small>{% else %}—{% endif %}
+                </div>
+                <div style="font-size:0.75rem; color:#64748b;">
+                    Moy. {{ qs.avg|default:"—" }}/5 · {{ qs.count }} réponse{{ qs.count|pluralize }}
+                </div>
+            </div>
+            <!-- Distribution -->
+            <div style="flex:1; min-width:180px;">
+                {% for star, cnt in qs.distribution.items %}
+                <div class="dist-row">
+                    <span class="dist-label">{{ star }}★</span>
+                    <div class="dist-bar-wrap">
+                        {% if qs.count %}
+                            <div class="dist-bar" style="width:{% widthratio cnt qs.count 100 %}%"></div>
+                        {% else %}
+                            <div class="dist-bar" style="width:0%"></div>
+                        {% endif %}
+                    </div>
+                    <span class="dist-count">{{ cnt }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {% else %}
+        {% if qs.open_answers %}
+            {% for answer in qs.open_answers %}
+                <div class="open-answer">{{ answer }}</div>
+            {% endfor %}
+        {% else %}
+            <div style="color:#475569; font-size:0.875rem; font-style:italic;">Aucune réponse textuelle.</div>
+        {% endif %}
+    {% endif %}
+</div>
+{% empty %}
+<div style="color:#475569; text-align:center; padding:2rem;">Aucune question active.</div>
+{% endfor %}
+{% endblock %}
