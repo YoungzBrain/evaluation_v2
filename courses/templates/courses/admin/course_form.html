@@ -21,7 +21,7 @@
         <div class="mb-3">
             <label class="form-label">Nom de la matiere <span style="color:#ef4444;">*</span></label>
             <input type="text" name="name" class="form-control"
-                   value="{{ object.name|default:v.name|default:'' }}"
+                   value="{{ object.name|default:'' }}"
                    placeholder="ex : Algorithmique Avancee" required>
         </div>
 
@@ -32,8 +32,7 @@
                     <option value="">-- Choisir --</option>
                     {% for dept in departments %}
                         <option value="{{ dept.pk }}"
-                            {% if object.department_id == dept.pk %}selected{% endif %}
-                            {% if v.department == dept.pk|stringformat:"s" %}selected{% endif %}>
+                            {% if object.department_id == dept.pk %}selected{% endif %}>
                             {{ dept.name }}
                         </option>
                     {% endfor %}
@@ -45,8 +44,7 @@
                     <option value="">-- Choisir --</option>
                     {% for level in levels %}
                         <option value="{{ level.pk }}"
-                            {% if object.level_id == level.pk %}selected{% endif %}
-                            {% if v.level == level.pk|stringformat:"s" %}selected{% endif %}>
+                            {% if object.level_id == level.pk %}selected{% endif %}>
                             {{ level.name }}
                         </option>
                     {% endfor %}
@@ -58,8 +56,7 @@
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" name="is_general"
                        id="is-general-check" role="switch"
-                       {% if object.is_general %}checked{% endif %}
-                       {% if not object and v.is_general %}checked{% endif %}>
+                       {% if object.is_general %}checked{% endif %}>
                 <label class="form-check-label" for="is-general-check" style="color:#cbd5e1;">
                     🌐 Cours general <small style="color:#475569;">(visible par tous les etudiants du niveau)</small>
                 </label>
@@ -73,8 +70,7 @@
                 {% for spec in specializations %}
                     <option value="{{ spec.pk }}"
                         data-dept="{{ spec.department_id }}"
-                        {% if object.specialization_id == spec.pk %}selected{% endif %}
-                        {% if v.specialization == spec.pk|stringformat:"s" %}selected{% endif %}>
+                        {% if object.specialization_id == spec.pk %}selected{% endif %}>
                         {{ spec.name }} ({{ spec.department.name }})
                     </option>
                 {% endfor %}
@@ -112,7 +108,6 @@ function filterSpecsByDept() {
 isGenCheck.addEventListener('change', toggleSpecRow);
 deptSelect.addEventListener('change', filterSpecsByDept);
 
-// Init au chargement
 toggleSpecRow();
 filterSpecsByDept();
 </script>
