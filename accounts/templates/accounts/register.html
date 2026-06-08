@@ -52,27 +52,7 @@
                    placeholder="••••••••" required autocomplete="new-password">
         </div>
 
-        <div class="mb-4">
-            <label class="form-label">Je suis</label>
-            <div class="d-flex gap-3">
-                <div class="form-check flex-fill">
-                    <input class="form-check-input" type="radio" name="role"
-                           id="role_student" value="student"
-                           {% if role != 'teacher' %}checked{% endif %}>
-                    <label class="form-check-label" for="role_student" style="color:#f1f5f9;">
-                         Etudiant
-                    </label>
-                </div>
-                <div class="form-check flex-fill">
-                    <input class="form-check-input" type="radio" name="role"
-                           id="role_teacher" value="teacher"
-                           {% if role == 'teacher' %}checked{% endif %}>
-                    <label class="form-check-label" for="role_teacher" style="color:#f1f5f9;">
-                         Enseignant
-                    </label>
-                </div>
-            </div>
-        </div>
+        <input type="hidden" name="role" value="student">
 
         <button type="submit" class="btn-primary-custom w-100 text-center">
             Creer mon compte

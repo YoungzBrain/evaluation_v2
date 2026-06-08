@@ -1,6 +1,6 @@
 {% extends 'accounts/base.html' %}
 
-{% block title %}Accueil — Evaluation des Enseignants{% endblock %}
+{% block title %}Accueil — Classement public{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -62,8 +62,8 @@
 
 {% block content %}
 <div class="hero">
-    <h1>Classement des Enseignants</h1>
-    <p>Consultez les evaluations des enseignants par departement. Aucune connexion requise.</p>
+    <h1>Classement public</h1>
+    <p>Consultez les évaluations des intervenants et des cours par département. Aucune connexion requise.</p>
     <div class="d-flex gap-2 justify-content-center flex-wrap">
         <a href="{% url 'register' %}" class="btn-primary-custom">S'inscrire</a>
         <a href="{% url 'login' %}" class="btn-primary-custom" style="background:#334155;">Se connecter</a>

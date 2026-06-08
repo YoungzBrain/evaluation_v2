@@ -11,6 +11,11 @@
     </p>
 </div>
 
+<!-- Quick actions -->
+<div style="margin-bottom:1rem; display:flex; justify-content:flex-end;">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTeacherModal">Ajouter Enseignant</button>
+</div>
+
 <!-- Stats -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
@@ -23,18 +28,11 @@
     </div>
     <div class="col-md-3">
         <a href="{% url 'teacher_list' %}" style="text-decoration:none;">
-        <div class="card-dark p-4 text-center" style="transition:border-color 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#334155'">
-            <div style="font-size:2rem;">👨‍🏫</div>
-            <div style="font-size:2rem; font-weight:700; color:#10b981;">{{ total_teachers }}</div>
+        <div class="card-dark p-4 text-center" style="transition:border-color 0.2s;" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
+            <div style="font-size:2rem;">👩‍🏫</div>
+            <div style="font-size:2rem; font-weight:700; color:#f59e0b;">{{ total_teachers }}</div>
             <div style="color:#94a3b8; font-size:0.875rem;">Enseignants</div>
         </div></a>
-    </div>
-    <div class="col-md-3">
-        <div class="card-dark p-4 text-center">
-            <div style="font-size:2rem;">🎓</div>
-            <div style="font-size:2rem; font-weight:700; color:#f59e0b;">{{ total_students }}</div>
-            <div style="color:#94a3b8; font-size:0.875rem;">Etudiants</div>
-        </div>
     </div>
     <div class="col-md-3">
         <a href="{% url 'course_list' %}" style="text-decoration:none;">
@@ -78,6 +76,14 @@
     </div>
     <div class="col-md-4">
         <div class="card-dark p-3">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">👩‍🏫</div>
+            <div style="font-weight:600; margin-bottom:0.25rem;">Enseignants</div>
+            <div style="color:#475569; font-size:0.8rem; margin-bottom:0.75rem;">Creer, activer et gerer les enseignants</div>
+            <a href="{% url 'teacher_list' %}" class="btn-action btn-edit" style="font-size:0.8rem; padding:0.3rem 0.7rem;">Gerer</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-dark p-3">
             <div style="font-size:1.5rem; margin-bottom:0.5rem;"></div>
             <div style="font-weight:600; margin-bottom:0.25rem;">Niveaux</div>
             <div style="color:#475569; font-size:0.8rem; margin-bottom:0.75rem;">Annee 1 a Annee 5</div>
@@ -92,13 +98,59 @@
             <a href="{% url 'course_list' %}" class="btn-action btn-edit" style="font-size:0.8rem; padding:0.3rem 0.7rem;">Gerer</a>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card-dark p-3">
-            <div style="font-size:1.5rem; margin-bottom:0.5rem;"></div>
-            <div style="font-weight:600; margin-bottom:0.25rem;">Enseignants</div>
-            <div style="color:#475569; font-size:0.8rem; margin-bottom:0.75rem;">Activer / desactiver des comptes</div>
-            <a href="{% url 'teacher_list' %}" class="btn-action btn-edit" style="font-size:0.8rem; padding:0.3rem 0.7rem;">Gerer</a>
+</div>
+{% endblock %}
+
+<!-- Create Teacher Modal -->
+<div class="modal fade" id="createTeacherModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Creer un enseignant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'teacher_create' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Prénom</label>
+                        <input name="first_name" type="text" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input name="last_name" type="text" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input name="email" type="email" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Departements (choisir au moins un)</label>
+                        <select name="departments" class="form-select" multiple required>
+                            {% for d in departments %}
+                                <option value="{{ d.id }}">{{ d.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Maintenez Ctrl (Windows) ou Cmd (Mac) pour sélectionner plusieurs.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Matieres (optionnel)</label>
+                        <select name="courses" class="form-select" multiple>
+                            {% for c in courses %}
+                                <option value="{{ c.id }}">{{ c.name }} — {{ c.department.name }} — {{ c.level.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Attribuez les cours que cet enseignant dispense.</div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Creer</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-{% endblock %}

@@ -119,3 +119,14 @@ class TeacherProfile(models.Model):
 
     def __str__(self):
         return f"Profile of {self.user}"
+
+
+# --- Signals: auto-create TeacherProfile when a teacher user is created ---
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
+@receiver(post_save, sender=User)
+def ensure_teacher_profile(sender, instance, created, **kwargs):
+    if created and instance.role == 'teacher':
+        TeacherProfile.objects.get_or_create(user=instance)

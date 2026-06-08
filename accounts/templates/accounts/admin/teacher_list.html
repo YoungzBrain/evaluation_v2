@@ -1,10 +1,13 @@
 {% extends 'accounts/admin/base_admin.html' %}
-{% block title %}Enseignants{% endblock %}
+{% block title %}Evalués{% endblock %}
 
 {% block admin_content %}
 <div class="admin-page-header">
-    <h2>👨‍🏫 Enseignants</h2>
-    <span style="color:#94a3b8; font-size:0.875rem;">{{ teachers|length }} enseignant{{ teachers|length|pluralize }}</span>
+    <div>
+        <h2>👥 Personnes évaluées</h2>
+        <span style="color:#94a3b8; font-size:0.875rem;">{{ teachers|length }} personne{{ teachers|length|pluralize }} évaluée{{ teachers|length|pluralize }}</span>
+    </div>
+    <a href="{% url 'teacher_create' %}" class="btn-action btn-edit">Ajouter un évalué</a>
 </div>
 
 <div class="card-dark" style="overflow:hidden;">
@@ -52,14 +55,17 @@
                 {% endif %}
             </td>
             <td>
-                <form method="POST" action="{% url 'teacher_toggle' teacher.pk %}">
-                    {% csrf_token %}
-                    {% if teacher.is_active %}
-                        <button type="submit" class="btn-action btn-toggle-off">Desactiver</button>
-                    {% else %}
-                        <button type="submit" class="btn-action btn-toggle-on">Reactiver</button>
-                    {% endif %}
-                </form>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                    <a href="{% url 'teacher_edit' teacher.pk %}" class="btn-action btn-edit">Modifier</a>
+                    <form method="POST" action="{% url 'teacher_toggle' teacher.pk %}" style="margin:0;">
+                        {% csrf_token %}
+                        {% if teacher.is_active %}
+                            <button type="submit" class="btn-action btn-toggle-off">Desactiver</button>
+                        {% else %}
+                            <button type="submit" class="btn-action btn-toggle-on">Reactiver</button>
+                        {% endif %}
+                    </form>
+                </div>
             </td>
         </tr>
     {% endfor %}
@@ -67,8 +73,8 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <div class="icon">👨‍🏫</div>
-    <p>Aucun enseignant inscrit pour le moment.</p>
+    <div class="icon">�</div>
+    <p>Aucune personne évaluée inscrite pour le moment.</p>
 </div>
 {% endif %}
 </div>

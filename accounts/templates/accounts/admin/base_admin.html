@@ -1,18 +1,64 @@
 {% extends 'accounts/base.html' %}
 
-{% block nav_links %}
-    <a href="{% url 'admin_dashboard' %}"     class="nav-link-custom {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
-    <a href="{% url 'department_list' %}"     class="nav-link-custom {% if 'department' in request.resolver_match.url_name %}active{% endif %}">Departements</a>
-    <a href="{% url 'specialization_list' %}" class="nav-link-custom {% if 'specialization' in request.resolver_match.url_name %}active{% endif %}">Specialisations</a>
-    <a href="{% url 'level_list' %}"          class="nav-link-custom {% if 'level' in request.resolver_match.url_name %}active{% endif %}">Niveaux</a>
-    <a href="{% url 'course_list' %}"         class="nav-link-custom {% if 'course' in request.resolver_match.url_name %}active{% endif %}">Matieres</a>
-    <a href="{% url 'teacher_list' %}"        class="nav-link-custom {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}">Enseignants</a>
-    <a href="{% url 'question_list' %}"       class="nav-link-custom {% if 'question' in request.resolver_match.url_name %}active{% endif %}">Questions</a>
-    <a href="{% url 'admin_evaluation_list' %}" class="nav-link-custom {% if 'evaluation' in request.resolver_match.url_name %}active{% endif %}">Evaluations</a>
-{% endblock %}
+{% block topbar %}{% endblock %}
 
 {% block extra_css %}
 <style>
+    .admin-layout {
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .admin-sidebar {
+        flex: 0 0 250px;
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 16px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.18);
+    }
+    .admin-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .admin-sidebar h3 {
+        margin: 0 0 1rem 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #f8fafc;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    .admin-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .admin-nav .nav-link-custom {
+        display: block;
+        padding: 0.95rem 1rem;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: #1f2937;
+        color: #d1d5db;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .admin-nav .nav-link-custom:hover {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f8fafc;
+    }
+    .admin-nav .nav-link-custom.active {
+        background: #2563eb;
+        color: #ffffff;
+        border-color: #1d4ed8;
+    }
+    .admin-main {
+        flex: 1;
+    }
     .admin-page-header {
         display: flex;
         align-items: center;
@@ -47,6 +93,34 @@
         vertical-align: middle;
     }
     .table-dark-custom tr:hover td { background: #1e293b33; }
+    .card-dark {
+        background: #111827;
+        border: 1px solid #1f2937;
+        color: #e2e8f0;
+    }
+    .card-dark input,
+    .card-dark select,
+    .card-dark textarea,
+    .card-dark .form-control,
+    .card-dark .form-select {
+        background: #0f172a;
+        border: 1px solid #334155;
+        color: #e2e8f0;
+    }
+    .card-dark input::placeholder,
+    .card-dark textarea::placeholder,
+    .card-dark .form-control::placeholder,
+    .card-dark .form-select::placeholder {
+        color: #94a3b8;
+    }
+    .card-dark .form-select option {
+        background: #0f172a;
+        color: #e2e8f0;
+    }
+    .card-dark label,
+    .card-dark .form-label {
+        color: #cbd5e1;
+    }
     .badge-active   { background: #064e3b; color: #6ee7b7; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
     .badge-inactive { background: #450a0a; color: #fca5a5; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
     .btn-action {
@@ -74,5 +148,28 @@
 {% endblock %}
 
 {% block content %}
-{% block admin_content %}{% endblock %}
+<div class="admin-toolbar">
+    <a href="{% url 'logout' %}" class="btn-logout">Deconnexion</a>
+</div>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <h3>Administration</h3>
+        <nav class="admin-nav">
+            {% block nav_links %}
+                <a href="{% url 'admin_dashboard' %}" class="nav-link-custom {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="{% url 'department_list' %}" class="nav-link-custom {% if 'department' in request.resolver_match.url_name %}active{% endif %}">Departements</a>
+                <a href="{% url 'specialization_list' %}" class="nav-link-custom {% if 'specialization' in request.resolver_match.url_name %}active{% endif %}">Specialisations</a>
+                <a href="{% url 'level_list' %}" class="nav-link-custom {% if 'level' in request.resolver_match.url_name %}active{% endif %}">Niveaux</a>
+                <a href="{% url 'course_list' %}" class="nav-link-custom {% if 'course' in request.resolver_match.url_name %}active{% endif %}">Matieres</a>
+                <a href="{% url 'teacher_list' %}" class="nav-link-custom {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}">Enseignants</a>
+                <a href="{% url 'question_list' %}" class="nav-link-custom {% if 'question' in request.resolver_match.url_name %}active{% endif %}">Questions</a>
+                <a href="{% url 'admin_evaluation_list' %}" class="nav-link-custom {% if 'evaluation' in request.resolver_match.url_name %}active{% endif %}">Evaluations</a>
+                <a href="{% url 'logout' %}" class="nav-link-custom">Deconnexion</a>
+            {% endblock %}
+        </nav>
+    </aside>
+    <section class="admin-main">
+        {% block admin_content %}{% endblock %}
+    </section>
+</div>
 {% endblock %}

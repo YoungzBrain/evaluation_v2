@@ -5,7 +5,7 @@
 
 <!-- Étapes -->
 <div class="steps-bar">
-    <div class="step done"><div class="step-num">✓</div> Enseignant</div>
+    <div class="step done"><div class="step-num">✓</div> Personne</div>
     <div class="step-line done"></div>
     <div class="step done"><div class="step-num">✓</div> Cours</div>
     <div class="step-line done"></div>
@@ -26,7 +26,7 @@
     <!-- Récap -->
     <div class="card-dark p-4 mb-4" style="text-align:left;">
         <div style="display:flex; gap:0.5rem; margin-bottom:0.6rem;">
-            <span style="color:#64748b; font-size:0.85rem; min-width:90px;">Enseignant</span>
+            <span style="color:#64748b; font-size:0.85rem; min-width:90px;">Personne évaluée</span>
             <span style="color:#f1f5f9; font-size:0.85rem; font-weight:600;">
                 {{ evaluation.teacher.get_full_name|default:evaluation.teacher.username }}
             </span>
@@ -59,7 +59,7 @@
 
     <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
         <a href="{% url 'evaluation_teacher_list' %}" class="btn-primary-custom">
-            Évaluer un autre enseignant
+            Évaluer une autre personne
         </a>
         <a href="{% url 'student_dashboard' %}"
            style="padding:0.6rem 1.5rem; border-radius:8px; font-weight:600;

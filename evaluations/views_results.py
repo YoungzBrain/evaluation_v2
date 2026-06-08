@@ -1,11 +1,11 @@
 """
 Module 6 — Résultats & Classement
-  - Scores enseignant par matière (moyenne/100)
-  - Détail par matière
-  - Classement public dynamique
-  - Toutes les évaluations (admin)
-  - Détail évaluation (admin)
-  - Téléchargement PDF (admin)
+    - Scores par matière (moyenne/100)
+    - Détail par matière
+    - Classement public dynamique
+    - Toutes les évaluations (admin)
+    - Détail évaluation (admin)
+    - Téléchargement PDF (admin)
 """
 import os
 from django.shortcuts import render, redirect, get_object_or_404
@@ -112,7 +112,7 @@ def _color_for_score(score):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# VUE — Scores d'un enseignant (accessible à l'enseignant lui-même + admin)
+# VUE — Scores d'une personne évaluée (accessible à l'intervenant lui-même + admin)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @_require_teacher_or_admin
@@ -257,7 +257,7 @@ def public_ranking(request):
         })
 
     return render(request, 'evaluations/results/public_ranking.html', {
-        'page_title':    'Classement des Enseignants',
+        'page_title':    'Classement public',
         'ranking_data':  ranking_data,
         'departments':   departments,
         'dept_filter':   dept_filter,
@@ -387,7 +387,7 @@ def admin_download_pdf(request, pk):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# VUE ADMIN — Scores d'un enseignant (depuis panel admin)
+# VUE ADMIN — Scores d'une personne évaluée (depuis panel admin)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @_require_admin

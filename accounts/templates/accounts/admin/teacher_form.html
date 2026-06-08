@@ -1,0 +1,56 @@
+{% extends 'accounts/admin/base_admin.html' %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+    <h2>{{ page_title }}</h2>
+</div>
+
+<div class="card-dark" style="padding: 1.5rem;">
+    <form method="POST">
+        {% csrf_token %}
+
+        <div style="display:grid; gap:1rem;">
+            <label>
+                Nom
+                <input type="text" class="form-control" name="last_name" value="{{ teacher.last_name|default:'' }}" required>
+            </label>
+
+            <label>
+                Prénom
+                <input type="text" class="form-control" name="first_name" value="{{ teacher.first_name|default:'' }}" required>
+            </label>
+
+            <label>
+                Email
+                <input type="email" class="form-control" name="email" value="{{ teacher.email|default:'' }}" required>
+            </label>
+
+            <div>
+                <label class="form-label" style="display:block; margin-bottom:0.5rem;">Departements</label>
+                <select class="form-select" name="departments" multiple style="width:100%; min-height:160px;">
+                    {% for department in departments %}
+                        <option value="{{ department.id }}" {% if department.id in selected_department_ids %}selected{% endif %}>{{ department.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="form-label" style="display:block; margin-bottom:0.5rem;">Matieres</label>
+                <select class="form-select" name="courses" multiple style="width:100%; min-height:160px;">
+                    {% for course in courses %}
+                        <option value="{{ course.id }}" {% if course.id in selected_course_ids %}selected{% endif %}>
+                            {{ course.name }} — {{ course.department.name }} / {{ course.level.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <p style="color:#94a3b8; font-size:0.9rem; margin:0;">Les enseignants ne peuvent pas se connecter directement. Ils sont uniquement utilisables comme sujets d'évaluation.</p>
+
+            <button type="submit" class="btn-action btn-edit">{{ action }}</button>
+            <a href="{% url 'teacher_list' %}" class="btn-action btn-delete" style="text-align:center; display:inline-block;">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -77,6 +77,19 @@
             </select>
         </div>
 
+        <div class="mb-4">
+            <label class="form-label">Enseignants assignés</label>
+            <select name="teachers" class="form-select" multiple>
+                {% for teacher in teachers %}
+                    <option value="{{ teacher.pk }}"
+                        {% if teacher.pk in selected_teacher_ids or teacher.pk in assigned_teacher_ids %}selected{% endif %}>
+                        {{ teacher.get_full_name|default:teacher.username }} — {{ teacher.email }}
+                    </option>
+                {% endfor %}
+            </select>
+            <div class="form-text">Choisissez un ou plusieurs enseignants pour cette matiere.</div>
+        </div>
+
         <div class="d-flex gap-3">
             <button type="submit" class="btn-primary-custom">{{ action }}</button>
             <a href="{% url 'course_list' %}" class="btn-action btn-edit" style="padding:0.6rem 1.5rem;">Annuler</a>

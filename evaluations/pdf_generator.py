@@ -125,7 +125,7 @@ def generate_evaluation_pdf(evaluation):
     level_name   = evaluation.course.level.name
 
     info_data = [
-        ['Enseignant évalué',  teacher_name],
+        ['Personne évaluée',  teacher_name],
         ['Département',        dept_name],
         ['Matière',            course_name],
         ['Niveau',             level_name],
@@ -206,7 +206,7 @@ def generate_evaluation_pdf(evaluation):
     story.append(Spacer(1, 0.8*cm))
     story.append(HRFlowable(width='100%', thickness=1, color=SLATE_BORDER, spaceAfter=8))
     story.append(Paragraph(
-        'Évaluation anonyme — Plateforme d\'Évaluation des Enseignants',
+        'Évaluation anonyme — Plateforme d\'Évaluation',
         ParagraphStyle('Footer', parent=styles['Normal'],
                        fontSize=8, textColor=TEXT_MUTED, alignment=TA_CENTER)
     ))

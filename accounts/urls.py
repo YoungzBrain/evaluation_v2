@@ -42,5 +42,7 @@ urlpatterns = [
 
     # ── Module 3 : Enseignants ────────────────────────────────────────────────
     path('admin/teachers/',                  views_admin.teacher_list,   name='teacher_list'),
+    path('admin/teachers/new/',              views_admin.teacher_create, name='teacher_create'),
+    path('admin/teachers/<int:pk>/edit/',    views_admin.teacher_edit,   name='teacher_edit'),
     path('admin/teachers/<int:pk>/toggle/',  views_admin.teacher_toggle, name='teacher_toggle'),
 ]

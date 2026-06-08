@@ -1,10 +1,10 @@
 """
 Module 5 — Évaluations (côté étudiant)
-  - Liste enseignants filtrée par département de l'étudiant
-  - Logique cours général vs spécialisé
-  - Sélection enseignant → cours → formulaire
-  - Soumission — une seule fois par enseignant/cours
-  - Génération PDF automatique
+    - Liste des personnes accessibles filtrée par département de l'étudiant
+    - Logique cours général vs spécialisé
+    - Sélection personne → cours → formulaire
+    - Soumission — une seule fois par personne/cours
+    - Génération PDF automatique
 """
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -56,7 +56,7 @@ def _already_evaluated(student, teacher, course):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# VUE 1 — Liste des enseignants accessibles
+# VUE 1 — Liste des personnes accessibles
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @student_required
@@ -97,7 +97,7 @@ def teacher_list(request):
     return render(request, 'evaluations/student/teacher_list.html', {
         'teachers_data': result,
         'profile':       profile,
-        'page_title':    'Choisir un enseignant',
+        'page_title':    'Choisir une personne',
     })
 
 
@@ -125,7 +125,7 @@ def course_select(request, teacher_pk):
         })
 
     if not courses_data:
-        messages.info(request, "Cet enseignant n'a pas de cours accessible pour votre profil.")
+        messages.info(request, "Cette personne n'a pas de cours accessible pour votre profil.")
         return redirect('evaluation_teacher_list')
 
     return render(request, 'evaluations/student/course_select.html', {
@@ -151,12 +151,12 @@ def evaluation_form(request, teacher_pk, course_pk):
         return redirect('evaluation_teacher_list')
 
     if not TeacherCourse.objects.filter(teacher=teacher, course=course).exists():
-        messages.error(request, "Cet enseignant n'enseigne pas ce cours.")
+        messages.error(request, "Cette personne n'enseigne pas ce cours.")
         return redirect('evaluation_course_select', teacher_pk=teacher_pk)
 
     # Doublon
     if _already_evaluated(request.user, teacher, course):
-        messages.warning(request, "Vous avez déjà évalué cet enseignant pour ce cours.")
+        messages.warning(request, "Vous avez déjà évalué cette personne pour ce cours.")
         return redirect('evaluation_course_select', teacher_pk=teacher_pk)
 
     questions = Question.objects.filter(is_active=True)

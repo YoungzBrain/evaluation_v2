@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import IntegrityError
 
-from .models import User, Department, Specialization, Level
+from .models import User, Department, Specialization, Level, TeacherProfile
+from courses.models import Course, TeacherCourse
 
 
 # ── Decorator helper ──────────────────────────────────────────────────────────
@@ -317,7 +318,7 @@ def level_delete(request, pk):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# GESTION DES ENSEIGNANTS
+# GESTION DES PERSONNES ÉVALUÉES
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @admin_required
@@ -328,15 +329,20 @@ def teacher_list(request):
         .prefetch_related('teacher_profile__departments', 'teacher_courses__course')
         .order_by('last_name', 'first_name')
     )
+    departments = Department.objects.all()
+    courses = Course.objects.select_related('department', 'level').filter(is_active=True).order_by('department__name', 'level__order', 'name')
+
     return render(request, 'accounts/admin/teacher_list.html', {
         'teachers': teachers,
-        'page_title': 'Enseignants',
+        'departments': departments,
+        'courses': courses,
+        'page_title': 'Personnes évaluées',
     })
 
 
 @admin_required
 def teacher_toggle(request, pk):
-    """Active ou desactive un compte enseignant."""
+    """Active ou desactive un compte de personne évaluée."""
     teacher = get_object_or_404(User, pk=pk, role='teacher')
 
     if request.method == 'POST':
@@ -345,3 +351,174 @@ def teacher_toggle(request, pk):
         status = 'active' if teacher.is_active else 'desactive'
         messages.success(request, f'Compte de {teacher.get_full_name()} {status}.')
     return redirect('teacher_list')
+
+
+@admin_required
+def teacher_edit(request, pk):
+    teacher = get_object_or_404(User, pk=pk, role='teacher')
+    departments = Department.objects.all()
+    courses = Course.objects.select_related('department', 'level').filter(is_active=True).order_by('department__name', 'level__order', 'name')
+    profile = getattr(teacher, 'teacher_profile', None)
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '').strip()
+        last_name  = request.POST.get('last_name', '').strip()
+        email      = request.POST.get('email', '').strip().lower()
+        dept_ids   = request.POST.getlist('departments')
+        course_ids = request.POST.getlist('courses')
+
+        if not first_name or not last_name or not email:
+            messages.error(request, 'Veuillez renseigner le nom, prenom et email.')
+            return render(request, 'accounts/admin/teacher_form.html', {
+                'teacher': teacher,
+                'departments': departments,
+                'courses': courses,
+                'selected_department_ids': set(int(d) for d in dept_ids if d.isdigit()),
+                'selected_course_ids': set(int(c) for c in course_ids if c.isdigit()),
+                'page_title': 'Modifier enseignant',
+                'action': 'Enregistrer',
+            })
+
+        if User.objects.exclude(pk=teacher.pk).filter(email=email).exists():
+            messages.error(request, 'Un compte avec cet email existe deja.')
+            return render(request, 'accounts/admin/teacher_form.html', {
+                'teacher': teacher,
+                'departments': departments,
+                'courses': courses,
+                'selected_department_ids': set(int(d) for d in dept_ids if d.isdigit()),
+                'selected_course_ids': set(int(c) for c in course_ids if c.isdigit()),
+                'page_title': 'Modifier enseignant',
+                'action': 'Enregistrer',
+            })
+
+        teacher.first_name = first_name
+        teacher.last_name = last_name
+        teacher.email = email
+        teacher.username = email
+        teacher.save()
+
+        if not profile:
+            profile = TeacherProfile.objects.create(user=teacher)
+
+        profile.departments.set(dept_ids)
+
+        selected_course_ids = set(int(c) for c in course_ids if c.isdigit())
+        existing_course_ids = set(teacher.teacher_courses.values_list('course_id', flat=True))
+
+        for removed_id in existing_course_ids - selected_course_ids:
+            TeacherCourse.objects.filter(teacher=teacher, course_id=removed_id).delete()
+
+        for course_id in selected_course_ids - existing_course_ids:
+            try:
+                course = Course.objects.get(pk=course_id)
+                TeacherCourse.objects.get_or_create(teacher=teacher, course=course)
+            except Course.DoesNotExist:
+                continue
+
+        messages.success(request, 'Enseignant modifie avec succes.')
+        return redirect('teacher_list')
+
+    selected_department_ids = set(profile.departments.values_list('id', flat=True)) if profile else set()
+    selected_course_ids = set(teacher.teacher_courses.values_list('course_id', flat=True))
+
+    return render(request, 'accounts/admin/teacher_form.html', {
+        'teacher': teacher,
+        'departments': departments,
+        'courses': courses,
+        'selected_department_ids': selected_department_ids,
+        'selected_course_ids': selected_course_ids,
+        'page_title': 'Modifier enseignant',
+        'action': 'Enregistrer',
+    })
+
+
+@admin_required
+def teacher_create(request):
+    """Create a teacher account (admin only). Assign departments and courses."""
+    departments = Department.objects.all()
+    courses = Course.objects.select_related('department', 'level').filter(is_active=True).order_by('department__name', 'level__order', 'name')
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '').strip()
+        last_name  = request.POST.get('last_name', '').strip()
+        email      = request.POST.get('email', '').strip().lower()
+        dept_ids   = request.POST.getlist('departments')
+        course_ids = request.POST.getlist('courses')
+
+        if not first_name or not last_name or not email:
+            messages.error(request, 'Veuillez renseigner le nom, prenom et email.')
+            return render(request, 'accounts/admin/teacher_form.html', {
+                'teacher': None,
+                'departments': departments,
+                'courses': courses,
+                'selected_department_ids': set(int(d) for d in dept_ids if d.isdigit()),
+                'selected_course_ids': set(int(c) for c in course_ids if c.isdigit()),
+                'page_title': 'Nouvel évalué',
+                'action': 'Créer',
+            })
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Un compte avec cet email existe deja.')
+            return render(request, 'accounts/admin/teacher_form.html', {
+                'teacher': None,
+                'departments': departments,
+                'courses': courses,
+                'selected_department_ids': set(int(d) for d in dept_ids if d.isdigit()),
+                'selected_course_ids': set(int(c) for c in course_ids if c.isdigit()),
+                'page_title': 'Nouvel évalué',
+                'action': 'Créer',
+            })
+
+        try:
+            user = User.objects.create_user(
+                username = email,
+                email    = email,
+                password = None,
+                first_name = first_name,
+                last_name  = last_name,
+                role = 'teacher',
+                is_active = True,
+            )
+            # Ensure teacher cannot login with a password
+            user.set_unusable_password()
+            user.save()
+
+            profile = getattr(user, 'teacher_profile', None)
+            if not profile:
+                profile = TeacherProfile.objects.create(user=user)
+
+            if dept_ids:
+                profile.departments.set(dept_ids)
+
+            current_course_ids = set()
+            for course_id in course_ids:
+                try:
+                    course = Course.objects.get(pk=course_id)
+                    TeacherCourse.objects.get_or_create(teacher=user, course=course)
+                    current_course_ids.add(course.id)
+                except Course.DoesNotExist:
+                    continue
+
+            messages.success(request, 'Compte enseignant cree avec succes.')
+            return redirect('teacher_list')
+        except Exception as e:
+            messages.error(request, f'Erreur lors de la creation du compte: {e}')
+            return render(request, 'accounts/admin/teacher_form.html', {
+                'teacher': None,
+                'departments': departments,
+                'courses': courses,
+                'selected_department_ids': set(int(d) for d in dept_ids if d.isdigit()),
+                'selected_course_ids': set(int(c) for c in course_ids if c.isdigit()),
+                'page_title': 'Nouvel évalué',
+                'action': 'Créer',
+            })
+
+    return render(request, 'accounts/admin/teacher_form.html', {
+        'teacher': None,
+        'departments': departments,
+        'courses': courses,
+        'selected_department_ids': set(),
+        'selected_course_ids': set(),
+        'page_title': 'Nouvel évalué',
+        'action': 'Créer',
+    })

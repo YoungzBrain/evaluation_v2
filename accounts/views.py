@@ -30,7 +30,9 @@ def register(request):
         email      = request.POST.get('email', '').strip().lower()
         password   = request.POST.get('password', '')
         confirm    = request.POST.get('confirm_password', '')
-        role       = request.POST.get('role', 'student')
+        # Public registration must always create students. Teacher accounts
+        # are created/managed by admins only.
+        role       = 'student'
 
         # --- Validations ---
         if not first_name or not last_name:
@@ -45,9 +47,7 @@ def register(request):
             messages.error(request, 'Un compte avec cet email existe deja.')
             return render(request, 'accounts/register.html', {'role': role})
 
-        if role not in ['student', 'teacher']:
-            messages.error(request, 'Role invalide.')
-            return render(request, 'accounts/register.html', {'role': role})
+        # role is enforced to 'student' for public registrations
 
         # --- Validation du mot de passe ---
         try:
@@ -76,10 +76,8 @@ def register(request):
         login(request, user)
         messages.success(request, 'Compte cree avec succes. Completez votre profil.')
 
-        if role == 'student':
-            return redirect('complete_profile_student')
-        else:
-            return redirect('complete_profile_teacher')
+        # Public users always complete the student profile
+        return redirect('complete_profile_student')
 
     return render(request, 'accounts/register.html')
 
@@ -106,8 +104,12 @@ def login_view(request):
             user = authenticate(request, username=identifier, password=password)
 
         if user is not None and user.is_active:
-            login(request, user)
-            return redirect_by_role(user)
+            # Block teacher accounts from logging in via the public form.
+            if getattr(user, 'role', None) == 'teacher':
+                messages.error(request, 'Les comptes personnes évaluées sont gérés par l\'administration.')
+            else:
+                login(request, user)
+                return redirect_by_role(user)
         else:
             messages.error(request, 'Identifiant ou mot de passe incorrect.')
 
@@ -243,12 +245,17 @@ def admin_dashboard(request):
     total_departments   = Department.objects.count()
     total_evaluations   = Evaluation.objects.filter(status='submitted').count()
 
+    departments = Department.objects.all()
+    courses     = Course.objects.filter(is_active=True).select_related('department', 'level')
+
     return render(request, 'accounts/admin_dashboard.html', {
         'total_teachers':    total_teachers,
         'total_students':    total_students,
         'total_courses':     total_courses,
         'total_departments': total_departments,
         'total_evaluations': total_evaluations,
+        'departments':       departments,
+        'courses':           courses,
     })
 
 

@@ -1,9 +1,9 @@
 {% extends 'accounts/base.html' %}
-{% block title %}Tableau de bord Enseignant{% endblock %}
+{% block title %}Tableau de bord{% endblock %}
 
 {% block nav_links %}
     <a href="{% url 'teacher_dashboard' %}" class="nav-link-custom {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">Dashboard</a>
-    <a href="{% url 'my_scores' %}" class="nav-link-custom {% if 'score' in request.resolver_match.url_name %}active{% endif %}">Mes Scores</a>
+    <a href="{% url 'my_scores' %}" class="nav-link-custom {% if 'score' in request.resolver_match.url_name %}active{% endif %}">Mes scores</a>
     <a href="{% url 'public_ranking' %}" class="nav-link-custom">Classement</a>
 {% endblock %}
 
