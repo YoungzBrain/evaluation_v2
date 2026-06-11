@@ -1,0 +1,171 @@
+/* PDF Overlay Styling */
+
+#pdf-overlay-container {
+  position: relative;
+  width: 100%;
+  margin: 1.5rem 0;
+  background: #f8fafc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+#pdf-canvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  background: white;
+}
+
+.pdf-overlay-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Question blocks positioned on overlay */
+.question-block-overlay {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+  margin: 0; /* Reset margins for overlay positioning */
+  transition: box-shadow 0.2s ease;
+}
+
+.question-block-overlay:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.question-block-overlay .question-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+/* Star rating on overlay */
+.star-rating {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.star-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  background: #f1f5f9;
+  color: #0f172a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.star-btn:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.star-btn.selected {
+  background: #6366f1;
+  color: white;
+  border-color: #6366f1;
+}
+
+/* Textarea on overlay */
+.open-answer {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 50px;
+  background: #fafbfc;
+  color: #0f172a;
+  transition: border-color 0.2s ease;
+}
+
+.open-answer:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Label for scoring */
+.question-block-overlay .score-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #pdf-overlay-container {
+    margin: 1rem 0;
+  }
+
+  .question-block-overlay {
+    padding: 10px;
+  }
+
+  .star-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  .question-block-overlay .question-text {
+    font-size: 0.9rem;
+  }
+}
+
+/* Loading state */
+.pdf-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.pdf-loading::after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  border: 2px solid #cbd5e1;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error state */
+.pdf-error {
+  padding: 1.5rem;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #991b1b;
+  font-size: 0.9rem;
+}

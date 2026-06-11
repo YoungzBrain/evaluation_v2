@@ -43,7 +43,7 @@
 
         <button type="submit" class="btn-action btn-edit">Filtrer</button>
         {% if search or dept_filter or teacher_filter %}
-            <a href="{% url 'admin_evaluation_list' %}" class="btn-action btn-delete">✕ Reset</a>
+            <a href="{% url 'admin_evaluation_list' %}" class="btn-action btn-delete">Reset</a>
         {% endif %}
     </form>
 </div>
@@ -96,7 +96,7 @@
 </div>
 {% else %}
     <div class="empty-state">
-        <div class="icon">📋</div>
+        <div class="icon"></div>
         <p>Aucune évaluation trouvée{% if search or dept_filter or teacher_filter %} pour ces filtres{% endif %}.</p>
     </div>
 {% endif %}

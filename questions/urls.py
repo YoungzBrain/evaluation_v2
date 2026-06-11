@@ -15,4 +15,7 @@ urlpatterns = [
 
     # ── Import CSV ────────────────────────────────────────────────────────────
     path('admin/questions/import/',                views_admin.question_import, name='question_import'),
+    # PDF admin functions disabled - not yet implemented
+    # path('admin/questions/pdfs/',                  views_admin.pdf_list, name='pdf_list'),
+    # path('admin/questions/pdfs/<int:pk>/manage/',  views_admin.pdf_manage, name='pdf_manage'),
 ]

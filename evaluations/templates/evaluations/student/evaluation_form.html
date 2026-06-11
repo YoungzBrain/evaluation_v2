@@ -1,17 +1,37 @@
 {% extends 'evaluations/student/base_student.html' %}
+{% load static %}
 {% block title %}Formulaire d'évaluation{% endblock %}
 
 {% block student_extra_css %}
+<link rel="stylesheet" href="{% static 'css/pdf_overlay.css' %}">
 <style>
     .progress-bar-custom {
-        height: 4px; background: #1e293b; border-radius: 999px; margin-bottom: 1.5rem; overflow: hidden;
+        height: 4px; background: #d1d5db; border-radius: 999px; margin-bottom: 1.5rem; overflow: hidden;
     }
     .progress-bar-custom .fill { height: 100%; background: #6366f1; transition: width 0.3s; }
     .submit-btn-area {
-        position: sticky; bottom: 0; background: #0f172a;
-        border-top: 1px solid #334155; padding: 1rem 0 0.5rem;
+        position: sticky; bottom: 0; background: #ffffff;
+        border-top: 1px solid #cbd5e1; padding: 1rem 0 0.5rem;
         margin-top: 1.5rem;
     }
+    {% if pdf %}
+    .pdf-overlay-wrapper {
+        position: relative;
+        width: 100%;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    #pdf-canvas {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        background: white;
+    }
+    .question-block {
+        margin-bottom: 0;
+    }
+    {% endif %}
 </style>
 {% endblock %}
 
@@ -19,9 +39,9 @@
 
 <!-- Étapes -->
 <div class="steps-bar">
-    <div class="step done"><div class="step-num">✓</div> Personne</div>
+    <div class="step done"><div class="step-num"></div> Personne</div>
     <div class="step-line done"></div>
-    <div class="step done"><div class="step-num">✓</div> Cours</div>
+    <div class="step done"><div class="step-num"></div> Cours</div>
     <div class="step-line done"></div>
     <div class="step active"><div class="step-num">3</div> Évaluation</div>
     <div class="step-line"></div>
@@ -33,7 +53,7 @@
     <a href="{% url 'evaluation_course_select' teacher.pk %}" style="color:#6366f1; font-size:0.85rem;">← Retour</a>
     <div>
         <h2 style="font-size:1.1rem; font-weight:700; margin:0;">{{ teacher.get_full_name|default:teacher.username }}</h2>
-        <span style="font-size:0.82rem; color:#64748b;">
+        <span style="font-size:0.82rem; color:#475569; font-weight:500;">
             {{ course.name }} · {{ course.level }}
             {% if course.is_general %}
                 <span class="badge-sm badge-general" style="margin-left:0.3rem;">Général</span>
@@ -48,7 +68,7 @@
 {% if messages %}
 <div class="card-dark p-3 mb-3" style="border-color:#ef4444;">
     {% for msg in messages %}
-    <div style="color:#fca5a5; font-size:0.85rem;">⚠ {{ msg }}</div>
+    <div style="color:#fca5a5; font-size:0.85rem;">{{ msg }}</div>
     {% endfor %}
 </div>
 {% endif %}
@@ -62,6 +82,57 @@
 <form method="POST" id="evalForm" novalidate>
     {% csrf_token %}
 
+    {% if pdf %}
+    <!-- PDF Overlay Container -->
+    <div id="pdf-overlay-container" data-pdf-url="{{ pdf.file.url }}" data-questions="{{ pdf_positioning|escapejs }}">
+        <canvas id="pdf-canvas"></canvas>
+
+        <!-- Question blocks positioned on overlay -->
+        {% for q in questions %}
+        <div class="question-block question-block-overlay" id="q-block-{{ q.pk }}" data-type="{{ q.type }}" data-position="{{ q.position }}">
+            <div class="question-text">
+                <span style="color:#6366f1; font-size:0.8rem; font-weight:600; margin-right:0.4rem;">
+                    Q{{ forloop.counter }}
+                </span>
+                {{ q.text }}
+                {% if q.type == 'scored' %}
+                    <span style="color:#ef4444; font-size:0.85rem;"> *</span>
+                {% endif %}
+            </div>
+
+            {% if q.type == 'scored' %}
+                <!-- Star picker -->
+                <input type="hidden" name="question_{{ q.pk }}"
+                       id="score-{{ q.pk }}"
+                       value="{{ post_data|default:'' }}">
+
+                <div class="star-rating" data-question="{{ q.pk }}">
+                    {% for i in "12345" %}
+                    <button type="button" class="star-btn"
+                            onclick="setScore({{ q.pk }}, {{ forloop.counter }})"
+                            data-val="{{ forloop.counter }}">
+                        {{ forloop.counter }}
+                    </button>
+                    {% endfor %}
+                </div>
+                <div class="score-label" id="label-{{ q.pk }}">
+                    Sélectionnez une note de 1 (très insuffisant) à 5 (excellent)
+                </div>
+
+            {% else %}
+                <!-- Réponse ouverte -->
+                <textarea name="question_{{ q.pk }}"
+                          class="open-answer"
+                          rows="3"
+                          placeholder="Votre réponse (optionnel)…"
+                          oninput="updateProgress()">{{ post_data|default:'' }}</textarea>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Fallback: Standard form layout (no PDF) -->
     {% for q in questions %}
     <div class="question-block" id="q-block-{{ q.pk }}" data-type="{{ q.type }}">
         <div class="question-text">
@@ -75,7 +146,6 @@
         </div>
 
         {% if q.type == 'scored' %}
-            <!-- Star picker -->
             <input type="hidden" name="question_{{ q.pk }}"
                    id="score-{{ q.pk }}"
                    value="{{ post_data|default:'' }}">
@@ -89,13 +159,12 @@
                 </button>
                 {% endfor %}
             </div>
-            <div style="font-size:0.75rem; color:#475569; margin-top:0.4rem;"
+            <div style="font-size:0.75rem; color:#0f172a; margin-top:0.4rem; font-weight:500;"
                  id="label-{{ q.pk }}">
                 Sélectionnez une note de 1 (très insuffisant) à 5 (excellent)
             </div>
 
         {% else %}
-            <!-- Réponse ouverte -->
             <textarea name="question_{{ q.pk }}"
                       class="open-answer"
                       rows="3"
@@ -104,22 +173,26 @@
         {% endif %}
     </div>
     {% endfor %}
+    {% endif %}
 
     <!-- Zone submit sticky -->
     <div class="submit-btn-area">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
-            <span style="font-size:0.82rem; color:#64748b;" id="progressLabel">
+            <span style="font-size:0.82rem; color:#0f172a; font-weight:500;" id="progressLabel">
                 0 / {{ questions|length }} question(s) répondue(s)
             </span>
             <button type="submit" class="btn-primary-custom" id="submitBtn" disabled>
                 Soumettre l'évaluation
             </button>
         </div>
-        <p style="font-size:0.75rem; color:#475569; margin-top:0.5rem; margin-bottom:0;">
-            ⚠ Une fois soumise, l'évaluation ne peut plus être modifiée.
+        <p style="font-size:0.75rem; color:#0f172a; margin-top:0.5rem; margin-bottom:0; font-weight:500;">
+            Une fois soumise, l'évaluation ne peut plus être modifiée.
         </p>
     </div>
 </form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="{% static 'js/pdf_overlay.js' %}"></script>
 
 <script>
 const SCORE_LABELS = {
@@ -141,7 +214,6 @@ function setScore(questionPk, val) {
     document.getElementById(`score-${questionPk}`).value = val;
     document.getElementById(`label-${questionPk}`).textContent = SCORE_LABELS[val];
 
-    // Mettre en surbrillance les boutons
     const btns = document.querySelectorAll(`.star-rating[data-question="${questionPk}"] .star-btn`);
     btns.forEach(btn => {
         btn.classList.toggle('selected', parseInt(btn.dataset.val) <= val);
@@ -159,11 +231,10 @@ function updateProgress() {
     document.getElementById('submitBtn').disabled = (filled < totalRequired);
 }
 
-// Restaurer les valeurs en cas d'erreur POST
+// Restore values on error
 {% for q in questions %}
 {% if q.type == 'scored' %}
 (function() {
-    const saved = "{{ post_data|default:'' }}";  // placeholder — voir note ci-dessous
     const hiddenVal = document.getElementById('score-{{ q.pk }}').value;
     if (hiddenVal) { setScore({{ q.pk }}, parseInt(hiddenVal)); }
 })();
@@ -174,3 +245,4 @@ updateProgress();
 </script>
 
 {% endblock %}
+

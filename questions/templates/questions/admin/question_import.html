@@ -28,7 +28,7 @@
 {% block admin_content %}
 <div style="max-width:680px;">
 <div class="admin-page-header">
-    <h2>📥 Import CSV — Questions</h2>
+    <h2>Import CSV — Questions</h2>
     <a href="{% url 'question_list' %}" class="btn-action btn-edit">← Retour</a>
 </div>
 
@@ -57,12 +57,12 @@ text,type,is_active<br>
         {% csrf_token %}
 
         <div class="upload-zone mb-3" id="uploadZone" onclick="document.getElementById('csvFile').click()">
-            <div class="upload-icon">📄</div>
+            <div class="upload-icon"></div>
             <div style="color:#f1f5f9; font-weight:600;" id="uploadLabel">
-                Cliquez ou glissez-déposez votre fichier CSV
+                Cliquez ou glissez-déposez votre fichier CSV ou PDF
             </div>
-            <div class="upload-hint">Fichier .csv uniquement</div>
-            <input type="file" name="csv_file" id="csvFile" accept=".csv"
+            <div class="upload-hint">Fichier .csv ou .pdf</div>
+            <input type="file" name="csv_file" id="csvFile" accept=".csv,.pdf"
                    style="display:none;" required>
         </div>
 
@@ -81,7 +81,7 @@ const uploadZone = document.getElementById('uploadZone');
 
 input.addEventListener('change', () => {
     if (input.files.length) {
-        label.textContent = '✅ ' + input.files[0].name;
+        label.textContent = input.files[0].name;
         submitBtn.disabled = false;
     }
 });
@@ -94,7 +94,7 @@ uploadZone.addEventListener('drop', e => {
     const files = e.dataTransfer.files;
     if (files.length) {
         input.files = files;
-        label.textContent = '✅ ' + files[0].name;
+        label.textContent = files[0].name;
         submitBtn.disabled = false;
     }
 });

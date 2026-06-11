@@ -3,7 +3,7 @@
 
 {% block admin_content %}
 <div class="admin-page-header">
-    <h2>📚 Matieres</h2>
+    <h2> Matieres</h2>
     <a href="{% url 'course_create' %}" class="btn-primary-custom">+ Nouvelle matiere</a>
 </div>
 
@@ -19,7 +19,7 @@
             {% endfor %}
         </select>
         {% if dept_filter %}
-            <a href="{% url 'course_list' %}" class="btn-action btn-edit" style="white-space:nowrap;">✕ Effacer</a>
+            <a href="{% url 'course_list' %}" class="btn-action btn-edit" style="white-space:nowrap;">Effacer</a>
         {% endif %}
     </form>
 </div>
@@ -46,9 +46,9 @@
             <td>{{ course.level.name }}</td>
             <td>
                 {% if course.is_general %}
-                    <span style="color:#10b981; font-size:0.8rem;">🌐 General</span>
+                    <span style="color:#10b981; font-size:0.8rem;">General</span>
                 {% else %}
-                    <span style="color:#f59e0b; font-size:0.8rem;">🎯 Specialise</span>
+                    <span style="color:#f59e0b; font-size:0.8rem;">Specialise</span>
                 {% endif %}
             </td>
             <td style="color:#94a3b8; font-size:0.85rem;">{{ course.specialization.name|default:"—" }}</td>
@@ -79,7 +79,7 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <div class="icon">📚</div>
+    <div class="icon"></div>
     <p>Aucune matiere{% if dept_filter %} pour ce departement{% endif %}.
        <a href="{% url 'course_create' %}" style="color:#6366f1;">En creer une</a>.</p>
 </div>

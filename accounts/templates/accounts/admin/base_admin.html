@@ -8,6 +8,8 @@
         display: flex;
         gap: 1.5rem;
         align-items: flex-start;
+        margin: 0;
+        padding: 1.5rem;
     }
     .admin-sidebar {
         flex: 0 0 250px;
@@ -21,7 +23,8 @@
         display: flex;
         justify-content: flex-end;
         gap: 0.75rem;
-        margin-bottom: 1rem;
+        margin: 0;
+        padding: 0.75rem 1.5rem 0.75rem 1.5rem;
     }
     .admin-sidebar h3 {
         margin: 0 0 1rem 0;
@@ -58,6 +61,9 @@
     }
     .admin-main {
         flex: 1;
+        background: #ffffff;
+        color: #0f172a;
+        padding: 0.5rem 0;
     }
     .admin-page-header {
         display: flex;
@@ -75,51 +81,53 @@
         border-collapse: collapse;
     }
     .table-dark-custom th {
-        background: #1e293b;
-        color: #94a3b8;
+        background: #ffffff;
+        color: #0f172a;
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         padding: 0.75rem 1rem;
-        border-bottom: 1px solid #334155;
+        border-bottom: 1px solid #e6eef8;
         text-align: left;
     }
     .table-dark-custom td {
         padding: 0.875rem 1rem;
-        border-bottom: 1px solid #1e293b;
-        color: #f1f5f9;
+        border-bottom: 1px solid #eef2f7;
+        color: #0f172a;
         font-size: 0.9rem;
         vertical-align: middle;
+        background: #ffffff;
     }
-    .table-dark-custom tr:hover td { background: #1e293b33; }
+    .table-dark-custom tr:hover td { background: #f8fafc; }
     .card-dark {
-        background: #111827;
-        border: 1px solid #1f2937;
-        color: #e2e8f0;
+        /* visually keep existing class name but render as light card */
+        background: #ffffff;
+        border: 1px solid #e6eef8;
+        color: #0f172a;
     }
     .card-dark input,
     .card-dark select,
     .card-dark textarea,
     .card-dark .form-control,
     .card-dark .form-select {
-        background: #0f172a;
-        border: 1px solid #334155;
-        color: #e2e8f0;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        color: #0f172a;
     }
     .card-dark input::placeholder,
     .card-dark textarea::placeholder,
     .card-dark .form-control::placeholder,
     .card-dark .form-select::placeholder {
-        color: #94a3b8;
+        color: #6b7280;
     }
     .card-dark .form-select option {
-        background: #0f172a;
-        color: #e2e8f0;
+        background: #ffffff;
+        color: #0f172a;
     }
     .card-dark label,
     .card-dark .form-label {
-        color: #cbd5e1;
+        color: #0f172a;
     }
     .badge-active   { background: #064e3b; color: #6ee7b7; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
     .badge-inactive { background: #450a0a; color: #fca5a5; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
@@ -129,6 +137,8 @@
         display: inline-block; transition: opacity 0.15s;
     }
     .btn-action:hover { opacity: 0.85; }
+    .btn-logout { background: #374151; color: #f8fafc; padding: 0.5rem 0.95rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s; }
+    .btn-logout:hover { background: #4b5563; }
     .btn-edit   { background: #1d4ed8; color: #fff; }
     .btn-delete { background: #991b1b; color: #fff; }
     .btn-toggle-on  { background: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
@@ -140,9 +150,9 @@
     .filter-bar select { max-width: 280px; }
     .empty-state {
         text-align: center; padding: 3rem;
-        color: #475569; font-size: 0.9rem;
+        color: #0f172a; font-size: 0.9rem; background: #ffffff;
     }
-    .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.5rem; color: #0f172a; }
 </style>
 {% block admin_extra_css %}{% endblock %}
 {% endblock %}

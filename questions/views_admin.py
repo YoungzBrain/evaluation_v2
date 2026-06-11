@@ -7,11 +7,14 @@ Module 4 — Gestion des Questions (Admin)
 """
 import csv
 import io
+import os
+import tempfile
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import IntegrityError
+from django.conf import settings
 
 from .models import Question
 
@@ -205,6 +208,11 @@ def question_import(request):
                 'page_title': 'Import CSV',
             })
 
+        # Save CSV to temp file for PDF generation
+        csv_temp = tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, encoding='utf-8')
+        csv_temp.write(raw)
+        csv_temp.close()
+
         reader   = csv.DictReader(io.StringIO(raw))
         headers  = set(h.strip().lower() for h in (reader.fieldnames or []))
 
@@ -248,6 +256,35 @@ def question_import(request):
             Question.objects.create(text=text, type=qtype, is_active=is_active)
             results.append({'row': row_num, 'text': text[:60], 'status': 'ok', 'reason': ''})
             created += 1
+
+        # Generate PDF for display and link questions to it
+        if created > 0:
+            try:
+                from evaluations.pdf_converter import csv_to_pdf
+                from .models import PDFUpload
+
+                pdf_path = csv_to_pdf(csv_temp.name)
+                pdf_record = PDFUpload.objects.create(
+                    original_filename=f"{upload.name.rsplit('.', 1)[0]}.pdf",
+                    uploaded_by=request.user if hasattr(request, 'user') and request.user.is_authenticated else None
+                )
+                pdf_record.file.name = os.path.relpath(pdf_path, getattr(settings, 'MEDIA_ROOT', os.path.join(settings.BASE_DIR, 'media')))
+                pdf_record.save()
+
+                # Link created questions to the PDF
+                for idx, question in enumerate(Question.objects.filter(is_active=True).order_by('-created_at')[:created], 1):
+                    question.source_pdf = pdf_record
+                    question.pdf_page = 1
+                    question.position = idx
+                    question.save()
+            except Exception as exc:
+                messages.warning(request, f'PDF généré mais liaison échouée : {exc}')
+
+        # Clean up temp file
+        try:
+            os.unlink(csv_temp.name)
+        except Exception:
+            pass
 
         return render(request, 'questions/admin/question_import_report.html', {
             'page_title': 'Rapport d\'import CSV',

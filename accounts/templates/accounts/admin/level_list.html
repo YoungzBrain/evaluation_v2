@@ -3,7 +3,7 @@
 
 {% block admin_content %}
 <div class="admin-page-header">
-    <h2>📊 Niveaux</h2>
+    <h2>Niveaux</h2>
     <a href="{% url 'level_create' %}" class="btn-primary-custom">+ Nouveau niveau</a>
 </div>
 
@@ -34,7 +34,7 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <div class="icon">📊</div>
+    <div class="icon"></div>
     <p>Aucun niveau. <a href="{% url 'level_create' %}" style="color:#6366f1;">Creer le premier</a>.</p>
 </div>
 {% endif %}
@@ -43,7 +43,7 @@
 {% if not levels %}
 <div class="card-dark p-3 mt-3" style="max-width:600px; border-color:#334155;">
     <p style="color:#94a3b8; font-size:0.85rem; margin:0;">
-        💡 <strong>Astuce :</strong> Si vous avez execute le seeder, les niveaux Annee 1 a Annee 5 sont deja presents.
+        <strong>Astuce :</strong> Si vous avez execute le seeder, les niveaux Annee 1 a Annee 5 sont deja presents.
         Lancez : <code style="background:#0f172a; padding:2px 6px; border-radius:4px;">python manage.py seed_levels</code>
     </p>
 </div>

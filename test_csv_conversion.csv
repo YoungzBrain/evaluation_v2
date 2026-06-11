@@ -1,0 +1,5 @@
+text,type,is_active
+"Est-ce que l'enseignant maîtrise le sujet ?",scored,1
+"Commentaire sur la pédagogie de l'enseignant",open,1
+"L'enseignant est-il accessible aux étudiants ?",scored,1
+"Suggestions d'amélioration pour le cours",open,1

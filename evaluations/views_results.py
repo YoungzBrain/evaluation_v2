@@ -52,16 +52,21 @@ def _score_to_100(avg_on_5):
     return round(avg_on_5 * 20, 1)
 
 
-def _get_teacher_scores(teacher):
+def _get_teacher_scores(teacher, department=None):
     """
     Returns a list of dicts:
       { course, nb_evaluations, avg_score (on 5), score_100, score_color }
     and the global average on 100.
+    
+    If department is provided, only include courses from that department.
     """
     # All submitted evaluations for this teacher
-    evaluations = Evaluation.objects.filter(
-        teacher=teacher, status='submitted'
-    ).select_related('course')
+    query = Evaluation.objects.filter(teacher=teacher, status='submitted')
+    
+    if department:
+        query = query.filter(course__department=department)
+    
+    evaluations = query.select_related('course')
 
     courses_seen = {}
     for ev in evaluations:
@@ -234,10 +239,10 @@ def public_ranking(request):
 
         teacher_list = []
         for t in teachers_with_evals:
-            _, global_avg = _get_teacher_scores(t)
+            _, global_avg = _get_teacher_scores(t, department=dept)
             if global_avg is not None:
                 # Subject breakdown
-                course_scores_raw, _ = _get_teacher_scores(t)
+                course_scores_raw, _ = _get_teacher_scores(t, department=dept)
                 subjects = [
                     {'name': cs['course'].name, 'score': cs['score_100']}
                     for cs in course_scores_raw if cs['score_100'] is not None

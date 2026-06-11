@@ -1,0 +1,6 @@
+text,type,is_active
+"L'intervenant explique clairement les notions abordées",scored,1
+"Les supports de cours sont adaptés et compréhensibles",scored,1
+"Le rythme de la formation était adéquat",scored,1
+"Quelles améliorations proposeriez-vous pour ce cours ?",open,1
+"Avez-vous des commentaires supplémentaires sur le formateur ?",open,1

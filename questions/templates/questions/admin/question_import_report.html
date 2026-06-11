@@ -20,7 +20,7 @@
 
 {% block admin_content %}
 <div class="admin-page-header">
-    <h2>📊 Rapport d'import CSV</h2>
+    <h2>Rapport d'import CSV</h2>
     <div class="d-flex gap-2">
         <a href="{% url 'question_import' %}" class="btn-action btn-edit">↑ Nouvel import</a>
         <a href="{% url 'question_list' %}"   class="btn-primary-custom">Voir les questions</a>
@@ -62,9 +62,9 @@
             <td style="font-size:0.85rem; color:#cbd5e1;">{{ r.text }}</td>
             <td>
                 {% if r.status == 'ok' %}
-                    <span class="badge-active">✓ Créée</span>
+                    <span class="badge-active">Créée</span>
                 {% else %}
-                    <span class="badge-inactive">✗ Ignorée</span>
+                    <span class="badge-inactive">Ignorée</span>
                 {% endif %}
             </td>
             <td style="font-size:0.82rem; color:#94a3b8;">
@@ -76,7 +76,7 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <div class="icon">📄</div>
+    <div class="icon"></div>
     <p>Le fichier CSV ne contenait aucune ligne de données.</p>
 </div>
 {% endif %}

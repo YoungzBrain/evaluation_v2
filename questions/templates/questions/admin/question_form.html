@@ -23,7 +23,7 @@
 {% block admin_content %}
 <div style="max-width:620px;">
 <div class="admin-page-header">
-    <h2>❓ {{ page_title }}</h2>
+    <h2>{{ page_title }}</h2>
     <a href="{% url 'question_list' %}" class="btn-action btn-edit">← Retour</a>
 </div>
 
@@ -55,7 +55,7 @@
                 </div>
                 <div class="type-card {% if form_data.type == 'open' %}selected{% endif %}"
                      onclick="selectType('open')">
-                    <div class="type-icon">💬</div>
+                    <div class="type-icon"></div>
                     <div class="type-label">Texte libre</div>
                     <div class="type-desc">L'étudiant rédige une réponse ouverte</div>
                 </div>

@@ -4,7 +4,7 @@
 {% block admin_content %}
 <div class="admin-page-header">
     <div>
-        <h2>👥 Personnes évaluées</h2>
+        <h2>Personnes évaluées</h2>
         <span style="color:#94a3b8; font-size:0.875rem;">{{ teachers|length }} personne{{ teachers|length|pluralize }} évaluée{{ teachers|length|pluralize }}</span>
     </div>
     <a href="{% url 'teacher_create' %}" class="btn-action btn-edit">Ajouter un évalué</a>

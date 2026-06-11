@@ -6,6 +6,7 @@ Module 5 — Évaluations (côté étudiant)
     - Soumission — une seule fois par personne/cours
     - Génération PDF automatique
 """
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -14,7 +15,7 @@ from django.db.models import Q
 
 from accounts.models import User
 from courses.models import Course, TeacherCourse
-from questions.models import Question
+from questions.models import Question, PDFUpload
 from .models import Evaluation, Answer, EvaluationPdf
 from .pdf_generator import generate_evaluation_pdf
 
@@ -53,6 +54,18 @@ def _already_evaluated(student, teacher, course):
     return Evaluation.objects.filter(
         student=student, teacher=teacher, course=course, status='submitted',
     ).exists()
+
+
+def _build_pdf_positioning_data(questions):
+    """Build positioning data for questions on PDF overlay."""
+    positioning = []
+    for q in questions:
+        positioning.append({
+            'id': q.pk,
+            'page': q.pdf_page or 1,
+            'position': q.position or 0,
+        })
+    return json.dumps(positioning)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -161,6 +174,20 @@ def evaluation_form(request, teacher_pk, course_pk):
 
     questions = Question.objects.filter(is_active=True)
 
+    # If there is a recent PDF upload that produced active questions, use those questions.
+    # Otherwise keep the default active questions.
+    pdf = None
+    try:
+        pdf_candidate = PDFUpload.objects.filter(questions__is_active=True).distinct().order_by('-created_at').first()
+    except Exception:
+        pdf_candidate = None
+
+    if pdf_candidate:
+        pdf_questions = questions.filter(source_pdf=pdf_candidate).order_by('position', 'id')
+        if pdf_questions.exists():
+            questions = pdf_questions
+            pdf = pdf_candidate
+
     if not questions.exists():
         messages.error(request, "Aucune question n'est disponible pour le moment.")
         return redirect('evaluation_teacher_list')
@@ -178,11 +205,15 @@ def evaluation_form(request, teacher_pk, course_pk):
         if errors:
             for e in errors:
                 messages.error(request, e)
-            return render(request, 'evaluations/student/evaluation_form.html', {
+            context = {
                 'teacher': teacher, 'course': course, 'questions': questions,
                 'page_title': f'Évaluation — {teacher.get_full_name() or teacher.username}',
                 'post_data': request.POST,
-            })
+            }
+            if pdf:
+                context['pdf'] = pdf
+                context['pdf_positioning'] = _build_pdf_positioning_data(questions)
+            return render(request, 'evaluations/student/evaluation_form.html', context)
 
         with transaction.atomic():
             evaluation = Evaluation.objects.create(
@@ -218,11 +249,16 @@ def evaluation_form(request, teacher_pk, course_pk):
         messages.success(request, 'Évaluation soumise avec succès !')
         return redirect('evaluation_confirmation', pk=evaluation.pk)
 
-    return render(request, 'evaluations/student/evaluation_form.html', {
+    context = {
         'teacher': teacher, 'course': course, 'questions': questions,
         'page_title': f'Évaluation — {teacher.get_full_name() or teacher.username}',
         'post_data': {},
-    })
+        'pdf': pdf,
+    }
+    if pdf:
+        context['pdf_positioning'] = _build_pdf_positioning_data(questions)
+
+    return render(request, 'evaluations/student/evaluation_form.html', context)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

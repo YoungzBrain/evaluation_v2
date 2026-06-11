@@ -10,7 +10,7 @@
 {% block admin_content %}
 <div style="max-width:600px;">
 <div class="admin-page-header">
-    <h2>📚 {{ page_title }}</h2>
+    <h2>{{ page_title }}</h2>
     <a href="{% url 'course_list' %}" class="btn-action btn-edit">← Retour</a>
 </div>
 
@@ -58,7 +58,7 @@
                        id="is-general-check" role="switch"
                        {% if object.is_general %}checked{% endif %}>
                 <label class="form-check-label" for="is-general-check" style="color:#cbd5e1;">
-                    🌐 Cours general <small style="color:#475569;">(visible par tous les etudiants du niveau)</small>
+                     Cours general <small style="color:#475569;">(visible par tous les etudiants du niveau)</small>
                 </label>
             </div>
         </div>

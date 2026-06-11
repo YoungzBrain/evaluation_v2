@@ -5,54 +5,54 @@
 
 <!-- Étapes -->
 <div class="steps-bar">
-    <div class="step done"><div class="step-num">✓</div> Personne</div>
+    <div class="step done"><div class="step-num"></div> Personne</div>
     <div class="step-line done"></div>
-    <div class="step done"><div class="step-num">✓</div> Cours</div>
+    <div class="step done"><div class="step-num"></div> Cours</div>
     <div class="step-line done"></div>
-    <div class="step done"><div class="step-num">✓</div> Évaluation</div>
+    <div class="step done"><div class="step-num"></div> Évaluation</div>
     <div class="step-line done"></div>
     <div class="step active"><div class="step-num">4</div> Confirmation</div>
 </div>
 
 <div style="max-width:520px; margin: 0 auto; text-align:center; padding-top:1rem;">
-    <div style="font-size:3rem; margin-bottom:1rem;">✅</div>
-    <h2 style="font-size:1.3rem; font-weight:700; color:#f1f5f9; margin-bottom:0.5rem;">
+    <div style="font-size:3rem; margin-bottom:1rem;"></div>
+    <h2 style="font-size:1.3rem; font-weight:700; color:#0f172a; margin-bottom:0.5rem;">
         Évaluation soumise avec succès !
     </h2>
-    <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:1.5rem;">
+    <p style="color:#475569; font-size:0.9rem; margin-bottom:1.5rem; font-weight:500;">
         Votre évaluation a bien été enregistrée et est anonyme.
     </p>
 
     <!-- Récap -->
     <div class="card-dark p-4 mb-4" style="text-align:left;">
         <div style="display:flex; gap:0.5rem; margin-bottom:0.6rem;">
-            <span style="color:#64748b; font-size:0.85rem; min-width:90px;">Personne évaluée</span>
-            <span style="color:#f1f5f9; font-size:0.85rem; font-weight:600;">
+            <span style="color:#475569; font-size:0.85rem; min-width:90px; font-weight:500;">Personne évaluée</span>
+            <span style="color:#0f172a; font-size:0.85rem; font-weight:700;">
                 {{ evaluation.teacher.get_full_name|default:evaluation.teacher.username }}
             </span>
         </div>
         <div style="display:flex; gap:0.5rem; margin-bottom:0.6rem;">
-            <span style="color:#64748b; font-size:0.85rem; min-width:90px;">Cours</span>
-            <span style="color:#f1f5f9; font-size:0.85rem; font-weight:600;">
+            <span style="color:#475569; font-size:0.85rem; min-width:90px; font-weight:500;">Cours</span>
+            <span style="color:#0f172a; font-size:0.85rem; font-weight:700;">
                 {{ evaluation.course.name }}
             </span>
         </div>
         <div style="display:flex; gap:0.5rem; margin-bottom:0.6rem;">
-            <span style="color:#64748b; font-size:0.85rem; min-width:90px;">Département</span>
-            <span style="color:#f1f5f9; font-size:0.85rem;">
+            <span style="color:#475569; font-size:0.85rem; min-width:90px; font-weight:500;">Département</span>
+            <span style="color:#0f172a; font-size:0.85rem; font-weight:500;">
                 {{ evaluation.course.department }}
             </span>
         </div>
         <div style="display:flex; gap:0.5rem;">
-            <span style="color:#64748b; font-size:0.85rem; min-width:90px;">Soumis le</span>
-            <span style="color:#f1f5f9; font-size:0.85rem;">
+            <span style="color:#475569; font-size:0.85rem; min-width:90px; font-weight:500;">Soumis le</span>
+            <span style="color:#0f172a; font-size:0.85rem; font-weight:500;">
                 {{ evaluation.updated_at|date:"d/m/Y à H:i" }}
             </span>
         </div>
 
         {% if evaluation.pdf %}
-        <div style="border-top:1px solid #334155; margin-top:0.75rem; padding-top:0.75rem;">
-            <span style="color:#6ee7b7; font-size:0.82rem;">📄 PDF généré automatiquement</span>
+        <div style="border-top:1px solid #cbd5e1; margin-top:0.75rem; padding-top:0.75rem;">
+            <span style="color:#10b981; font-size:0.82rem; font-weight:600;">PDF généré automatiquement</span>
         </div>
         {% endif %}
     </div>
@@ -62,8 +62,8 @@
             Évaluer une autre personne
         </a>
         <a href="{% url 'student_dashboard' %}"
-           style="padding:0.6rem 1.5rem; border-radius:8px; font-weight:600;
-                  border:1px solid #334155; color:#94a3b8; text-decoration:none;">
+           style="padding:0.6rem 1.5rem; border-radius:8px; font-weight:600; font-size:0.9rem;
+                  border:1px solid #cbd5e1; color:#0f172a; text-decoration:none; background:#ffffff;">
             Dashboard
         </a>
     </div>

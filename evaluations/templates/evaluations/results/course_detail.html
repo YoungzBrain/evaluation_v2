@@ -90,7 +90,7 @@
             <div style="flex:1; min-width:180px;">
                 {% for star, cnt in qs.distribution.items %}
                 <div class="dist-row">
-                    <span class="dist-label">{{ star }}★</span>
+                    <span class="dist-label">{{ star }}</span>
                     <div class="dist-bar-wrap">
                         {% if qs.count %}
                             <div class="dist-bar" style="width:{% widthratio cnt qs.count 100 %}%"></div>

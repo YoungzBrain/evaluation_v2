@@ -29,7 +29,7 @@
 
 {% block admin_content %}
 <div class="admin-page-header">
-    <h2>❓ Questions d'évaluation</h2>
+    <h2>Questions d'évaluation</h2>
     <div class="d-flex gap-2">
         <a href="{% url 'question_import' %}" class="btn-action btn-toggle-on" style="padding:0.4rem 1rem;">
             ↑ Import CSV
@@ -75,7 +75,7 @@
         </select>
         {% if filter_type or filter_status %}
             <a href="{% url 'question_list' %}" class="btn-action btn-edit" style="padding:0.3rem 0.8rem;">
-                ✕ Réinitialiser
+                Réinitialiser
             </a>
         {% endif %}
     </form>
@@ -134,7 +134,7 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <div class="icon">❓</div>
+    <div class="icon"></div>
     <p>
         {% if filter_type or filter_status %}
             Aucune question ne correspond aux filtres.
