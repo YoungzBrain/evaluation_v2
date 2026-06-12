@@ -1,33 +1,27 @@
 {% extends 'accounts/admin/base_admin.html' %}
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block admin_extra_css %}
-<style>
-    #spec-row { display: none; }
-</style>
-{% endblock %}
+{% block admin_extra_css %}{% endblock %}
 
 {% block admin_content %}
-<div style="max-width:600px;">
+<div class="mw-600">
 <div class="admin-page-header">
     <h2>{{ page_title }}</h2>
-    <a href="{% url 'course_list' %}" class="btn-action btn-edit">← Retour</a>
+    <a href="{% url 'course_list' %}" class="btn-secondary-custom btn-sm">← Retour</a>
 </div>
 
-<div class="card-dark p-4">
+<div class="card p-4">
     <form method="POST" id="course-form">
         {% csrf_token %}
 
         <div class="mb-3">
-            <label class="form-label">Nom de la matiere <span style="color:#ef4444;">*</span></label>
-            <input type="text" name="name" class="form-control"
-                   value="{{ object.name|default:'' }}"
-                   placeholder="ex : Algorithmique Avancee" required>
+            <label class="form-label">Nom de la matière <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control" value="{{ object.name|default:'' }}" placeholder="ex : Algorithmique Avancée" required>
         </div>
 
         <div class="row mb-3">
             <div class="col">
-                <label class="form-label">Departement <span style="color:#ef4444;">*</span></label>
+                <label class="form-label">Département <span class="text-danger">*</span></label>
                 <select name="department" id="dept-select" class="form-select" required>
                     <option value="">-- Choisir --</option>
                     {% for dept in departments %}
@@ -39,7 +33,7 @@
                 </select>
             </div>
             <div class="col">
-                <label class="form-label">Niveau <span style="color:#ef4444;">*</span></label>
+                <label class="form-label">Niveau <span class="text-danger">*</span></label>
                 <select name="level" class="form-select" required>
                     <option value="">-- Choisir --</option>
                     {% for level in levels %}
@@ -57,14 +51,14 @@
                 <input class="form-check-input" type="checkbox" name="is_general"
                        id="is-general-check" role="switch"
                        {% if object.is_general %}checked{% endif %}>
-                <label class="form-check-label" for="is-general-check" style="color:#cbd5e1;">
-                     Cours general <small style="color:#475569;">(visible par tous les etudiants du niveau)</small>
+                <label class="form-check-label text-muted" for="is-general-check">
+                     Cours general <small class="text-muted">(visible par tous les etudiants du niveau)</small>
                 </label>
             </div>
         </div>
 
-        <div class="mb-4" id="spec-row">
-            <label class="form-label">Specialisation concernee</label>
+        <div class="mb-4 d-none" id="spec-row">
+                <label class="form-label">Spécialisation concernée</label>
             <select name="specialization" id="spec-select" class="form-select">
                 <option value="">-- Aucune / toutes --</option>
                 {% for spec in specializations %}
@@ -79,7 +73,7 @@
 
         <div class="mb-4">
             <label class="form-label">Enseignants assignés</label>
-            <select name="teachers" class="form-select" multiple>
+            <select name="teachers" class="form-select multi-select" multiple>
                 {% for teacher in teachers %}
                     <option value="{{ teacher.pk }}"
                         {% if teacher.pk in selected_teacher_ids or teacher.pk in assigned_teacher_ids %}selected{% endif %}>
@@ -92,7 +86,7 @@
 
         <div class="d-flex gap-3">
             <button type="submit" class="btn-primary-custom">{{ action }}</button>
-            <a href="{% url 'course_list' %}" class="btn-action btn-edit" style="padding:0.6rem 1.5rem;">Annuler</a>
+            <a href="{% url 'course_list' %}" class="btn-sm btn-secondary-custom">Annuler</a>
         </div>
     </form>
 </div>
@@ -107,14 +101,14 @@ const deptSelect = document.getElementById('dept-select');
 const specSelect = document.getElementById('spec-select');
 
 function toggleSpecRow() {
-    specRow.style.display = isGenCheck.checked ? 'none' : 'block';
+    specRow.classList.toggle('d-none', isGenCheck.checked);
 }
 
 function filterSpecsByDept() {
     const deptId = deptSelect.value;
     Array.from(specSelect.options).forEach(opt => {
         if (!opt.value) return;
-        opt.style.display = (!deptId || opt.dataset.dept === deptId) ? '' : 'none';
+        opt.hidden = deptId && opt.dataset.dept !== deptId;
     });
 }
 

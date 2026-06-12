@@ -9,7 +9,7 @@
 
 <div class="filter-bar">
     <form method="GET" class="d-flex align-items-center gap-2">
-        <label style="color:#94a3b8; font-size:0.875rem; white-space:nowrap;">Filtrer par departement :</label>
+        <label class="text-muted-small text-nowrap">Filtrer par departement :</label>
         <select name="department" class="form-select" onchange="this.form.submit()">
             <option value="">Tous les departements</option>
             {% for dept in departments %}
@@ -19,43 +19,44 @@
             {% endfor %}
         </select>
         {% if dept_filter %}
-            <a href="{% url 'specialization_list' %}" class="btn-action btn-edit" style="white-space:nowrap;">Effacer</a>
+            <a href="{% url 'specialization_list' %}" class="btn-action btn-edit text-nowrap">Effacer</a>
         {% endif %}
     </form>
 </div>
 
-<div class="card-dark" style="overflow:hidden;">
+<div class="card">
 {% if specializations %}
-<table class="table-dark-custom">
+<div class="table-wrapper">
+<table class="table-custom">
     <thead>
         <tr>
             <th>Specialisation</th>
             <th>Departement</th>
             <th>Description</th>
-            <th style="width:160px;">Actions</th>
+            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for spec in specializations %}
         <tr>
             <td><strong>{{ spec.name }}</strong></td>
-            <td><span style="color:#6366f1;">{{ spec.department.name }}</span></td>
-            <td style="color:#94a3b8;">{{ spec.description|default:"—" }}</td>
+            <td class="text-accent">{{ spec.department.name }}</td>
+            <td class="muted">{{ spec.description|default:"—" }}</td>
             <td>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'specialization_edit' spec.pk %}" class="btn-action btn-edit">Modifier</a>
-                    <a href="{% url 'specialization_delete' spec.pk %}" class="btn-action btn-delete">Supprimer</a>
+                    <a href="{% url 'specialization_edit' spec.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
+                    <a href="{% url 'specialization_delete' spec.pk %}" class="btn-danger-sm">Supprimer</a>
                 </div>
             </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
     <div class="icon"></div>
-    <p>Aucune specialisation{% if dept_filter %} pour ce departement{% endif %}.
-       <a href="{% url 'specialization_create' %}" style="color:#6366f1;">En creer une</a>.</p>
+    <p>Aucune spécialisation{% if dept_filter %} pour ce département{% endif %}. <a href="{% url 'specialization_create' %}" class="link-secondary">En créer une</a>.</p>
 </div>
 {% endif %}
 </div>

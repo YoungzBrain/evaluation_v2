@@ -8,37 +8,29 @@
 {% endblock %}
 
 {% block content %}
-<div class="card-dark p-4 mb-4">
-    <h2 style="font-size:1.3rem; font-weight:700;">
-        Bienvenue, {{ request.user.get_full_name|default:request.user.username }}
-    </h2>
-    <p style="color:#94a3b8; margin:0; font-size:0.9rem;">
-        Consultez vos évaluations et scores par matière.
-    </p>
+<div class="card card-hover p-4 mb-4">
+    <h2 class="section-title mb-2">Bienvenue, {{ request.user.get_full_name|default:request.user.username }}</h2>
+    <p class="text-secondary">Consultez vos évaluations et scores par matière.</p>
 </div>
 
 <div class="row g-3">
     <div class="col-md-6">
-        <a href="{% url 'my_scores' %}" style="text-decoration:none;">
-        <div class="card-dark p-4" style="transition:border-color 0.2s; cursor:pointer;"
-             onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#334155'">
-            <div style="font-size:2rem;"></div>
-            <div style="font-weight:700; color:#f1f5f9; margin-top:0.5rem;">Mes Scores</div>
-            <div style="color:#94a3b8; font-size:0.875rem; margin-top:0.3rem;">
-                Voir vos moyennes par matière
+        <a href="{% url 'my_scores' %}" class="text-decoration-none">
+            <div class="card card-hover p-4 h-100">
+                <div class="display-4"></div>
+                <div class="h5 mt-3">Mes Scores</div>
+                <p class="text-secondary mb-0">Voir vos moyennes par matière</p>
             </div>
-        </div></a>
+        </a>
     </div>
     <div class="col-md-6">
-        <a href="{% url 'public_ranking' %}" style="text-decoration:none;">
-        <div class="card-dark p-4" style="transition:border-color 0.2s; cursor:pointer;"
-             onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
-            <div style="font-size:2rem;"></div>
-            <div style="font-weight:700; color:#f1f5f9; margin-top:0.5rem;">Classement Public</div>
-            <div style="color:#94a3b8; font-size:0.875rem; margin-top:0.3rem;">
-                Voir le classement général
+        <a href="{% url 'public_ranking' %}" class="text-decoration-none">
+            <div class="card card-hover p-4 h-100">
+                <div class="display-4"></div>
+                <div class="h5 mt-3">Classement Public</div>
+                <p class="text-secondary mb-0">Voir le classement général</p>
             </div>
-        </div></a>
+        </a>
     </div>
 </div>
 {% endblock %}

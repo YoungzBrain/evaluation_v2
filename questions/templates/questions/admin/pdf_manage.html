@@ -8,19 +8,19 @@
 </div>
 
 <div class="card-dark p-3 mb-3">
-    <div style="margin-bottom:0.5rem;">Fichier : <strong>{{ pdf.original_filename }}</strong></div>
-    <div style="margin-bottom:0.5rem;">Uploadé le {{ pdf.created_at }} par {{ pdf.uploaded_by }}</div>
-    <div style="margin-bottom:0.75rem;"><a href="{{ pdf.file.url }}">Télécharger le PDF</a></div>
+    <div class="meta-row"><span class="meta-label">Fichier :</span><span class="meta-value">{{ pdf.original_filename }}</span></div>
+    <div class="meta-row"><span class="meta-label">Uploadé le</span><span class="meta-value">{{ pdf.created_at }} par {{ pdf.uploaded_by }}</span></div>
+    <div class="meta-row"><span class="meta-label">Téléchargement :</span><span><a href="{{ pdf.file.url }}">Télécharger le PDF</a></span></div>
 
     <form method="POST">
         {% csrf_token %}
-        <p style="margin-bottom:0.5rem;">Réorganisez les questions et cliquez sur "Enregistrer".</p>
-        <ul id="q-list" style="list-style:none; padding:0;">
+        <p class="callout-note">Réorganisez les questions et cliquez sur "Enregistrer".</p>
+        <ul id="q-list" class="list-no-bullets">
             {% for q in questions %}
-            <li style="padding:0.5rem 0; border-bottom:1px solid #222; display:flex; align-items:center; gap:0.5rem;" data-id="{{ q.pk }}">
+            <li class="list-item-row" data-id="{{ q.pk }}">
                 <input type="hidden" name="order[]" value="{{ q.pk }}">
-                <div style="flex:1;">Q{{ forloop.counter }} (page {{ q.pdf_page|default:'?' }}): {{ q.text|truncatechars:120 }}</div>
-                <div style="display:flex; gap:0.25rem;">
+                <div class="flex-fill">Q{{ forloop.counter }} (page {{ q.pdf_page|default:'?' }}): {{ q.text|truncatechars:120 }}</div>
+                <div class="item-actions">
                     <button type="button" class="btn-action small" onclick="moveUp(this)">↑</button>
                     <button type="button" class="btn-action small" onclick="moveDown(this)">↓</button>
                 </div>
@@ -30,7 +30,7 @@
             {% endfor %}
         </ul>
 
-        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+        <div class="d-flex gap-2 mt-3">
             <button type="submit" class="btn-primary-custom">Enregistrer</button>
             <a href="{% url 'question_import' %}" class="btn-action">Importer un autre PDF</a>
         </div>

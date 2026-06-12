@@ -7,93 +7,27 @@
 <a href="{% url 'login' %}" class="nav-link-custom">Connexion</a>
 {% endblock %}
 
-{% block extra_css %}
-<style>
-    .hero {
-        text-align: center;
-        padding: 3.5rem 2rem 2.5rem;
-    }
-    .hero h1 { font-size: 2.2rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; }
-    .hero p  { color: #475569; font-size: 1rem; max-width: 520px; margin: 0 auto 1.75rem; }
-    .dept-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; }
-    .dept-tab {
-        background: #ffffff; border: 1px solid #dbeafe;
-        border-radius: 8px; padding: 0.4rem 1rem;
-        color: #334155; font-size: 0.85rem; cursor: pointer;
-        text-decoration: none; transition: all 0.2s;
-    }
-    .dept-tab:hover, .dept-tab.active { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
-    .dept-tab.all { background: #eef2ff; border-color: #bfdbfe; color: #1d4ed8; }
-    .dept-tab.all.active, .dept-tab.all:hover { background: #dbeafe; color: #1d4ed8; }
-
-    .dept-section { margin-bottom: 3rem; }
-    .dept-title {
-        color: #1d4ed8; font-weight: 700; font-size: 1rem;
-        border-bottom: 1px solid #dbeafe;
-        padding-bottom: 0.5rem; margin-bottom: 1rem;
-    }
-    .rank-card {
-        background: #ffffff; border: 1px solid #e2e8f0;
-        border-radius: 12px; padding: 1.1rem 1.5rem;
-        margin-bottom: 0.6rem;
-        display: flex; align-items: center; gap: 1rem;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .rank-card:hover { border-color: #93c5fd; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08); }
-    .rank-num {
-        font-size: 1.4rem; font-weight: 800;
-        color: #1d4ed8; min-width: 2rem; text-align: center;
-    }
-    .rank-num.gold   { color: #d97706; }
-    .rank-num.silver { color: #64748b; }
-    .rank-num.bronze { color: #b45309; }
-    .rank-info { flex: 1; }
-    .rank-name { font-weight: 700; color: #0f172a; margin-bottom: 0.25rem; font-size: 0.95rem; }
-    .subject-pill {
-        display: inline-block; background: #eff6ff;
-        border: 1px solid #dbeafe; border-radius: 6px;
-        padding: 0.15rem 0.55rem; font-size: 0.75rem;
-        color: #1e293b; margin: 0.1rem;
-    }
-    .subject-pill .s { font-weight: 700; }
-    .subject-pill .s.green  { color: #047857; }
-    .subject-pill .s.amber  { color: #b45309; }
-    .subject-pill .s.red    { color: #b91c1c; }
-    .global-badge {
-        padding: 0.4rem 0.9rem; border-radius: 999px;
-        font-weight: 700; font-size: 0.95rem; flex-shrink: 0;
-    }
-    .global-badge.green  { background: #ecfdf5; color: #166534; border: 1px solid #a7f3d0; }
-    .global-badge.amber  { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
-    .global-badge.red    { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
-    .empty-dept { color: #64748b; font-size: 0.875rem; font-style: italic; padding: 1rem 0; }
-</style>
-{% endblock %}
+{% block extra_css %}{% endblock %}
 
 {% block content %}
 <div class="hero">
-    <h1> Classement public</h1>
-    <p>Évaluations anonymes des étudiants. Résultats mis à jour en temps réel.</p>
+    <h1 class="hero-title">Classement public</h1>
+    <p class="hero-copy">Évaluations anonymes des étudiants. Résultats mis à jour en temps réel.</p>
 </div>
 
 <!-- Rankings -->
 {% for rd in ranking_data %}
     {% if not dept_filter or dept_filter == rd.department.pk|stringformat:"s" %}
     <div class="dept-section">
-        <div class="dept-title">{{ rd.department.name }}</div>
-
+            <div class="section-title mb-3">{{ rd.department.name }}</div>
         {% if rd.teachers %}
             {% for item in rd.teachers %}
             <div class="rank-card">
-                <div class="rank-num {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">
-                    #{{ forloop.counter }}
-                </div>
+                <div class="rank-num {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">#{{ forloop.counter }}</div>
                 <div class="rank-info">
                     <div>
                         {% for subj in item.subjects %}
-                        <span class="subject-pill">
-                            {{ subj.name }}
-                        </span>
+                        <span class="subject-pill">{{ subj.name }}</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -106,7 +40,7 @@
     </div>
     {% endif %}
 {% empty %}
-    <div style="text-align:center; padding:3rem; color:#475569;">Aucun département configuré.</div>
+    <div class="text-center py-5 text-secondary">Aucun département configuré.</div>
 {% endfor %}
 
 {% endblock %}

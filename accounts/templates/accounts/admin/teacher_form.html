@@ -6,29 +6,25 @@
     <h2>{{ page_title }}</h2>
 </div>
 
-<div class="card-dark" style="padding: 1.5rem;">
+<div class="card-dark p-4">
     <form method="POST">
         {% csrf_token %}
-
-        <div style="display:grid; gap:1rem;">
-            <label>
-                Nom
+        <div class="d-grid gap-3">
+            <label class="form-label">Nom
                 <input type="text" class="form-control" name="last_name" value="{{ teacher.last_name|default:'' }}" required>
             </label>
 
-            <label>
-                Prénom
+            <label class="form-label">Prénom
                 <input type="text" class="form-control" name="first_name" value="{{ teacher.first_name|default:'' }}" required>
             </label>
 
-            <label>
-                Email
+            <label class="form-label">Email
                 <input type="email" class="form-control" name="email" value="{{ teacher.email|default:'' }}" required>
             </label>
 
             <div>
-                <label class="form-label" style="display:block; margin-bottom:0.5rem;">Departements</label>
-                <select class="form-select" name="departments" multiple style="width:100%; min-height:160px;">
+                <label class="form-label">Départements</label>
+                <select class="form-select multi-select" name="departments" multiple>
                     {% for department in departments %}
                         <option value="{{ department.id }}" {% if department.id in selected_department_ids %}selected{% endif %}>{{ department.name }}</option>
                     {% endfor %}
@@ -36,8 +32,8 @@
             </div>
 
             <div>
-                <label class="form-label" style="display:block; margin-bottom:0.5rem;">Matieres</label>
-                <select class="form-select" name="courses" multiple style="width:100%; min-height:160px;">
+                <label class="form-label">Matieres</label>
+                <select class="form-select multi-select" name="courses" multiple>
                     {% for course in courses %}
                         <option value="{{ course.id }}" {% if course.id in selected_course_ids %}selected{% endif %}>
                             {{ course.name }} — {{ course.department.name }} / {{ course.level.name }}
@@ -46,10 +42,12 @@
                 </select>
             </div>
 
-            <p style="color:#94a3b8; font-size:0.9rem; margin:0;">Les enseignants ne peuvent pas se connecter directement. Ils sont uniquement utilisables comme sujets d'évaluation.</p>
+            <p class="muted">Les enseignants ne peuvent pas se connecter directement. Ils sont uniquement utilisables comme sujets d'évaluation.</p>
 
-            <button type="submit" class="btn-action btn-edit">{{ action }}</button>
-            <a href="{% url 'teacher_list' %}" class="btn-action btn-delete" style="text-align:center; display:inline-block;">Annuler</a>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn-primary-custom">{{ action }}</button>
+                <a href="{% url 'teacher_list' %}" class="btn-secondary-custom btn-sm">Annuler</a>
+            </div>
         </div>
     </form>
 </div>

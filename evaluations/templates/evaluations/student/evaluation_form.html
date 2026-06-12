@@ -4,35 +4,6 @@
 
 {% block student_extra_css %}
 <link rel="stylesheet" href="{% static 'css/pdf_overlay.css' %}">
-<style>
-    .progress-bar-custom {
-        height: 4px; background: #d1d5db; border-radius: 999px; margin-bottom: 1.5rem; overflow: hidden;
-    }
-    .progress-bar-custom .fill { height: 100%; background: #6366f1; transition: width 0.3s; }
-    .submit-btn-area {
-        position: sticky; bottom: 0; background: #ffffff;
-        border-top: 1px solid #cbd5e1; padding: 1rem 0 0.5rem;
-        margin-top: 1.5rem;
-    }
-    {% if pdf %}
-    .pdf-overlay-wrapper {
-        position: relative;
-        width: 100%;
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    #pdf-canvas {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        background: white;
-    }
-    .question-block {
-        margin-bottom: 0;
-    }
-    {% endif %}
-</style>
 {% endblock %}
 
 {% block student_content %}
@@ -49,16 +20,16 @@
 </div>
 
 <!-- En-tête -->
-<div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; flex-wrap:wrap;">
-    <a href="{% url 'evaluation_course_select' teacher.pk %}" style="color:#6366f1; font-size:0.85rem;">← Retour</a>
+<div class="justify-between flex-wrap gap-3 mb-4">
+    <a href="{% url 'evaluation_course_select' teacher.pk %}" class="link-secondary">← Retour</a>
     <div>
-        <h2 style="font-size:1.1rem; font-weight:700; margin:0;">{{ teacher.get_full_name|default:teacher.username }}</h2>
-        <span style="font-size:0.82rem; color:#475569; font-weight:500;">
+        <h2 class="section-title mb-1">{{ teacher.get_full_name|default:teacher.username }}</h2>
+        <span class="text-secondary small">
             {{ course.name }} · {{ course.level }}
             {% if course.is_general %}
-                <span class="badge-sm badge-general" style="margin-left:0.3rem;">Général</span>
+                <span class="badge-sm badge-general ms-2">Général</span>
             {% else %}
-                <span class="badge-sm badge-specialized" style="margin-left:0.3rem;">{{ course.specialization }}</span>
+                <span class="badge-sm badge-specialized ms-2">{{ course.specialization }}</span>
             {% endif %}
         </span>
     </div>
@@ -66,16 +37,16 @@
 
 <!-- Messages d'erreur -->
 {% if messages %}
-<div class="card-dark p-3 mb-3" style="border-color:#ef4444;">
+<div class="card card-hover p-3 mb-3 border border-danger">
     {% for msg in messages %}
-    <div style="color:#fca5a5; font-size:0.85rem;">{{ msg }}</div>
+    <div class="text-danger small">{{ msg }}</div>
     {% endfor %}
 </div>
 {% endif %}
 
 <!-- Barre de progression -->
 <div class="progress-bar-custom">
-    <div class="fill" id="progressFill" style="width:0%"></div>
+    <div class="progress-bar-custom"><div class="fill" id="progressFill"></div></div>
 </div>
 
 <!-- Formulaire -->
@@ -91,12 +62,12 @@
         {% for q in questions %}
         <div class="question-block question-block-overlay" id="q-block-{{ q.pk }}" data-type="{{ q.type }}" data-position="{{ q.position }}">
             <div class="question-text">
-                <span style="color:#6366f1; font-size:0.8rem; font-weight:600; margin-right:0.4rem;">
+                <span class="text-primary small fw-semibold me-2">
                     Q{{ forloop.counter }}
                 </span>
                 {{ q.text }}
                 {% if q.type == 'scored' %}
-                    <span style="color:#ef4444; font-size:0.85rem;"> *</span>
+                    <span class="text-danger small"> *</span>
                 {% endif %}
             </div>
 
@@ -136,12 +107,12 @@
     {% for q in questions %}
     <div class="question-block" id="q-block-{{ q.pk }}" data-type="{{ q.type }}">
         <div class="question-text">
-            <span style="color:#6366f1; font-size:0.8rem; font-weight:600; margin-right:0.4rem;">
+            <span class="text-accent small fw-bold me-2">
                 Q{{ forloop.counter }}
             </span>
             {{ q.text }}
             {% if q.type == 'scored' %}
-                <span style="color:#ef4444; font-size:0.85rem;"> *</span>
+                <span class="text-danger small"> *</span>
             {% endif %}
         </div>
 
@@ -159,8 +130,7 @@
                 </button>
                 {% endfor %}
             </div>
-            <div style="font-size:0.75rem; color:#0f172a; margin-top:0.4rem; font-weight:500;"
-                 id="label-{{ q.pk }}">
+<div class="text-secondary small mt-2" id="label-{{ q.pk }}">
                 Sélectionnez une note de 1 (très insuffisant) à 5 (excellent)
             </div>
 
@@ -177,17 +147,11 @@
 
     <!-- Zone submit sticky -->
     <div class="submit-btn-area">
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
-            <span style="font-size:0.82rem; color:#0f172a; font-weight:500;" id="progressLabel">
-                0 / {{ questions|length }} question(s) répondue(s)
-            </span>
-            <button type="submit" class="btn-primary-custom" id="submitBtn" disabled>
-                Soumettre l'évaluation
-            </button>
+        <div class="justify-between flex-wrap gap-3">
+            <span class="small text-dark" id="progressLabel">0 / {{ questions|length }} question(s) répondue(s)</span>
+            <button type="submit" class="btn-primary-custom" id="submitBtn" disabled>Soumettre l'évaluation</button>
         </div>
-        <p style="font-size:0.75rem; color:#0f172a; margin-top:0.5rem; margin-bottom:0; font-weight:500;">
-            Une fois soumise, l'évaluation ne peut plus être modifiée.
-        </p>
+        <p class="small text-dark mt-2 mb-0 fw-semibold">Une fois soumise, l'évaluation ne peut plus être modifiée.</p>
     </div>
 </form>
 

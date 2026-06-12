@@ -7,11 +7,12 @@
 {% endblock %}
 
 {% block content %}
-<div class="card-dark p-4 mb-4">
-    <h2 style="font-size:1.3rem; font-weight:700; color:#0f172a;">
-        Bienvenue, {{ request.user.get_full_name|default:request.user.username }}
-    </h2>
-    <p style="color:#475569; margin:0.25rem 0 1.25rem; font-size:0.9rem; font-weight:500;">
+<div class="card card-hover p-4 mb-4">
+    <h2 class="section-title mb-2">Bienvenue, {{ request.user.get_full_name|default:request.user.username }}</h2>
+    <p class="text-secondary mb-4">{% with p=request.user.student_profile %}
+        {{ p.department }} · {{ p.level }}{% if p.specialization %} · {{ p.specialization }}{% endif %}
+        {% endwith %}
+    </p>
         {% with p=request.user.student_profile %}
         {{ p.department }} · {{ p.level }}{% if p.specialization %} · {{ p.specialization }}{% endif %}
         {% endwith %}

@@ -7,44 +7,46 @@
     <a href="{% url 'level_create' %}" class="btn-primary-custom">+ Nouveau niveau</a>
 </div>
 
-<div class="card-dark" style="overflow:hidden; max-width:600px;">
+<div class="card mw-600">
 {% if levels %}
-<table class="table-dark-custom">
+<div class="table-wrapper">
+<table class="table-custom">
     <thead>
         <tr>
-            <th style="width:80px;">Ordre</th>
+            <th class="table-col-small">Ordre</th>
             <th>Nom</th>
-            <th style="width:160px;">Actions</th>
+            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for level in levels %}
         <tr>
-            <td style="color:#475569; text-align:center;">{{ level.order }}</td>
+            <td class="text-muted text-center">{{ level.order }}</td>
             <td><strong>{{ level.name }}</strong></td>
             <td>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'level_edit' level.pk %}" class="btn-action btn-edit">Modifier</a>
-                    <a href="{% url 'level_delete' level.pk %}" class="btn-action btn-delete">Supprimer</a>
+                    <a href="{% url 'level_edit' level.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
+                    <a href="{% url 'level_delete' level.pk %}" class="btn-danger-sm">Supprimer</a>
                 </div>
             </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
     <div class="icon"></div>
-    <p>Aucun niveau. <a href="{% url 'level_create' %}" style="color:#6366f1;">Creer le premier</a>.</p>
+    <p>Aucun niveau. <a href="{% url 'level_create' %}" class="link-secondary">Créer le premier</a>.</p>
 </div>
 {% endif %}
 </div>
 
 {% if not levels %}
-<div class="card-dark p-3 mt-3" style="max-width:600px; border-color:#334155;">
-    <p style="color:#94a3b8; font-size:0.85rem; margin:0;">
+<div class="card-dark p-3 mt-3 mw-600">
+    <p class="text-muted-small mb-0">
         <strong>Astuce :</strong> Si vous avez execute le seeder, les niveaux Annee 1 a Annee 5 sont deja presents.
-        Lancez : <code style="background:#0f172a; padding:2px 6px; border-radius:4px;">python manage.py seed_levels</code>
+        Lancez : <code class="code-inline">python manage.py seed_levels</code>
     </p>
 </div>
 {% endif %}

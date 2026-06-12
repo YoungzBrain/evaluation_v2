@@ -2,7 +2,7 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block admin_content %}
-<div style="max-width:400px;">
+<div class="mw-400 mx-auto">
 <div class="admin-page-header">
     <h2>{{ page_title }}</h2>
     <a href="{% url 'level_list' %}" class="btn-action btn-edit">← Retour</a>
@@ -12,19 +12,19 @@
     <form method="POST">
         {% csrf_token %}
         <div class="mb-3">
-            <label class="form-label">Nom du niveau <span style="color:#ef4444;">*</span></label>
+            <label class="form-label">Nom du niveau <span class="text-danger">*</span></label>
             <input type="text" name="name" class="form-control"
                    value="{{ object.name|default:'' }}" placeholder="ex : Annee 1" required>
         </div>
         <div class="mb-4">
-            <label class="form-label">Ordre <span style="color:#475569;">(pour le tri)</span></label>
+            <label class="form-label">Ordre <span class="text-secondary">(pour le tri)</span></label>
             <input type="number" name="order" class="form-control"
                    value="{{ object.order|default:'0' }}" min="0" placeholder="0">
-            <small style="color:#475569;">Les niveaux sont affiches du plus petit au plus grand ordre.</small>
+            <small class="text-secondary-small">Les niveaux sont affiches du plus petit au plus grand ordre.</small>
         </div>
         <div class="d-flex gap-3">
             <button type="submit" class="btn-primary-custom">{{ action }}</button>
-            <a href="{% url 'level_list' %}" class="btn-action btn-edit" style="padding:0.6rem 1.5rem;">Annuler</a>
+            <a href="{% url 'level_list' %}" class="btn-action btn-edit btn-action-sm">Annuler</a>
         </div>
     </form>
 </div>

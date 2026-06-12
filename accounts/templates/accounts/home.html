@@ -2,63 +2,7 @@
 
 {% block title %}Accueil — Classement public{% endblock %}
 
-{% block extra_css %}
-<style>
-    .hero {
-        text-align: center;
-        padding: 4rem 2rem 3rem;
-    }
-    .hero h1 { font-size: 2.5rem; font-weight: 800; color: #f1f5f9; margin-bottom: 1rem; }
-    .hero p { color: #94a3b8; font-size: 1.1rem; max-width: 560px; margin: 0 auto 2rem; }
-    .ranking-section { margin-top: 2rem; }
-    .dept-tab {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 0.45rem 1.1rem;
-        color: #94a3b8;
-        font-size: 0.875rem;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    .dept-tab:hover, .dept-tab.active { background: #6366f1; border-color: #6366f1; color: #fff; }
-    .teacher-rank-card {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 1.25rem 1.5rem;
-        margin-bottom: 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    .rank-number {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #334155;
-        min-width: 2rem;
-        text-align: center;
-    }
-    .rank-number.top1 { color: #f59e0b; }
-    .rank-number.top2 { color: #94a3b8; }
-    .rank-number.top3 { color: #cd7c2e; }
-    .teacher-info { flex: 1; }
-    .teacher-info h5 { font-weight: 700; margin-bottom: 0.2rem; color: #f1f5f9; font-size: 0.95rem; }
-    .subject-score {
-        display: inline-block;
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 6px;
-        padding: 0.15rem 0.6rem;
-        font-size: 0.78rem;
-        color: #94a3b8;
-        margin: 0.1rem;
-    }
-    .subject-score span { color: #10b981; font-weight: 700; }
-    .empty-msg { text-align: center; color: #475569; padding: 3rem; font-size: 0.9rem; }
-</style>
-{% endblock %}
+{% block extra_css %}{% endblock %}
 
 {% block content %}
 <div class="hero">
@@ -66,7 +10,7 @@
     <p>Consultez les évaluations des intervenants et des cours par département. Aucune connexion requise.</p>
     <div class="d-flex gap-2 justify-content-center flex-wrap">
         <a href="{% url 'register' %}" class="btn-primary-custom">S'inscrire</a>
-        <a href="{% url 'login' %}" class="btn-primary-custom" style="background:#334155;">Se connecter</a>
+        <a href="{% url 'login' %}" class="btn-secondary-custom">Se connecter</a>
     </div>
 </div>
 
@@ -74,29 +18,23 @@
     {% if departments %}
         <div class="d-flex gap-2 flex-wrap mb-4">
             {% for dept in departments %}
-                <a href="#dept-{{ dept.pk }}" class="dept-tab">{{ dept.name }}</a>
+                <a href="#dept-{{ dept.pk }}" class="tab-pill">{{ dept.name }}</a>
             {% endfor %}
         </div>
 
         {% for dept in departments %}
             <div id="dept-{{ dept.pk }}" class="mb-5">
-                <h4 style="color:#6366f1; font-weight:700; margin-bottom:1rem; border-bottom:1px solid #334155; padding-bottom:0.5rem;">
-                    {{ dept.name }}
-                </h4>
+                <h4 class="section-title">{{ dept.name }}</h4>
 
                 {% if dept.ranked_teachers %}
                     {% for item in dept.ranked_teachers %}
-                        <div class="teacher-rank-card">
-                            <div class="rank-number {% if forloop.counter == 1 %}top1{% elif forloop.counter == 2 %}top2{% elif forloop.counter == 3 %}top3{% endif %}">
-                                #{{ forloop.counter }}
-                            </div>
+                        <div class="rank-card">
+                            <div class="rank-number {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">#{{ forloop.counter }}</div>
                             <div class="teacher-info">
                                 <h5>{{ item.teacher.get_full_name|default:item.teacher.username }}</h5>
                                 <div>
                                     {% for subject in item.subjects %}
-                                        <span class="subject-score">
-                                            {{ subject.name }} — <span>{{ subject.score }}/100</span>
-                                        </span>
+                                        <span class="subject-pill">{{ subject.name }}</span>
                                     {% endfor %}
                                 </div>
                             </div>

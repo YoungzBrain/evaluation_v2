@@ -1,41 +1,22 @@
 {% extends 'accounts/admin/base_admin.html' %}
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block admin_extra_css %}
-<style>
-    .type-selector {
-        display: flex; gap: 1rem; margin-top: 0.5rem;
-    }
-    .type-card {
-        flex: 1; border: 2px solid #334155; border-radius: 10px; padding: 1rem;
-        cursor: pointer; transition: border-color 0.15s, background 0.15s;
-        text-align: center;
-    }
-    .type-card:hover { border-color: #6366f1; }
-    .type-card.selected { border-color: #6366f1; background: #1e1b4b22; }
-    .type-card .type-icon { font-size: 1.6rem; }
-    .type-card .type-label { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin-top: 0.3rem; }
-    .type-card .type-desc  { font-size: 0.78rem; color: #64748b; margin-top: 0.2rem; }
-    .char-count { font-size: 0.75rem; color: #475569; text-align: right; margin-top: 0.25rem; }
-</style>
-{% endblock %}
+{% block admin_extra_css %}{% endblock %}
 
 {% block admin_content %}
-<div style="max-width:620px;">
+<div class="mw-620">
 <div class="admin-page-header">
     <h2>{{ page_title }}</h2>
     <a href="{% url 'question_list' %}" class="btn-action btn-edit">← Retour</a>
 </div>
 
-<div class="card-dark p-4">
+<div class="card p-4">
     <form method="POST" id="questionForm">
         {% csrf_token %}
 
         <!-- Texte -->
         <div class="mb-4">
-            <label class="form-label">
-                Texte de la question <span style="color:#ef4444;">*</span>
-            </label>
+            <label class="form-label">Texte de la question <span class="text-danger">*</span></label>
             <textarea name="text" id="questionText" class="form-control" rows="3"
                       placeholder="ex : L'intervenant explique clairement les concepts..."
                       required maxlength="1000">{{ form_data.text|default:'' }}</textarea>
@@ -44,17 +25,15 @@
 
         <!-- Type (visuel) -->
         <div class="mb-4">
-            <label class="form-label">Type de question <span style="color:#ef4444;">*</span></label>
+            <label class="form-label">Type de question <span class="text-danger">*</span></label>
             <input type="hidden" name="type" id="typeInput" value="{{ form_data.type|default:'scored' }}">
             <div class="type-selector">
-                <div class="type-card {% if form_data.type != 'open' %}selected{% endif %}"
-                     onclick="selectType('scored')">
+                <div class="type-card {% if form_data.type != 'open' %}selected{% endif %}" onclick="selectType('scored', this)">
                     <div class="type-icon">⭐</div>
                     <div class="type-label">Note 1 – 5</div>
                     <div class="type-desc">L'étudiant attribue une note de 1 à 5</div>
                 </div>
-                <div class="type-card {% if form_data.type == 'open' %}selected{% endif %}"
-                     onclick="selectType('open')">
+                <div class="type-card {% if form_data.type == 'open' %}selected{% endif %}" onclick="selectType('open', this)">
                     <div class="type-icon"></div>
                     <div class="type-label">Texte libre</div>
                     <div class="type-desc">L'étudiant rédige une réponse ouverte</div>
@@ -68,27 +47,23 @@
                 <input class="form-check-input" type="checkbox" role="switch"
                        name="is_active" id="isActive"
                        {% if form_data.is_active %}checked{% endif %}>
-                <label class="form-check-label" for="isActive" style="color:#94a3b8;">
-                    Question active (visible dans les évaluations)
-                </label>
+                <label class="form-check-label muted" for="isActive">Question active (visible dans les évaluations)</label>
             </div>
         </div>
 
         <div class="d-flex gap-3">
             <button type="submit" class="btn-primary-custom">{{ action }}</button>
-            <a href="{% url 'question_list' %}" class="btn-action btn-edit" style="padding:0.6rem 1.5rem;">
-                Annuler
-            </a>
+            <a href="{% url 'question_list' %}" class="btn-sm btn-secondary-custom">Annuler</a>
         </div>
     </form>
 </div>
 </div>
 
 <script>
-function selectType(value) {
+function selectType(value, el) {
     document.getElementById('typeInput').value = value;
     document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
-    event.currentTarget.classList.add('selected');
+    if (el) el.classList.add('selected');
 }
 
 // Compteur de caractères

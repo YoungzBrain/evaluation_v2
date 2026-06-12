@@ -14,59 +14,42 @@
     <div class="step"><div class="step-num">4</div> Confirmation</div>
 </div>
 
-<div style="margin-bottom:1.25rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
-    <h2 style="font-size:1.2rem; font-weight:700; margin:0;">
-        � Choisir une personne
-    </h2>
-    <span style="color:#64748b; font-size:0.85rem;">
-        {{ profile.department }} · {{ profile.level }}
-        {% if profile.specialization %} · {{ profile.specialization }}{% endif %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h2 class="section-title mb-0">Choisir une personne</h2>
+    <span class="text-secondary">
+        {{ profile.department }} · {{ profile.level }}{% if profile.specialization %} · {{ profile.specialization }}{% endif %}
     </span>
 </div>
 
 {% if teachers_data %}
-    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1rem;">
+    <div class="card-grid mb-3">
     {% for data in teachers_data %}
         {% if data.all_done %}
         <div class="eval-card done">
         {% else %}
         <a href="{% url 'evaluation_course_select' data.teacher.pk %}" class="eval-card">
         {% endif %}
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
+            <div class="justify-between mb-3">
                 <div>
-                    <div style="font-weight:700; font-size:1rem; color:#0f172a;">
-                        {{ data.teacher.get_full_name|default:data.teacher.username }}
-                    </div>
-                    <div style="font-size:0.8rem; color:#475569; margin-top:0.15rem; font-weight:500;">
-                        {{ data.teacher.username }}
-                    </div>
+                    <div class="fw-bold text-dark">{{ data.teacher.get_full_name|default:data.teacher.username }}</div>
+                    <div class="text-secondary small">{{ data.teacher.username }}</div>
                 </div>
                 {% if data.all_done %}
-                    <span style="background:#064e3b; color:#6ee7b7; padding:0.2rem 0.6rem;
-                                 border-radius:999px; font-size:0.72rem; font-weight:600;">
-                        Complété
-                    </span>
+                    <span class="badge-sm badge-success">Complété</span>
                 {% endif %}
             </div>
-            <div style="border-top:1px solid #cbd5e1; padding-top:0.75rem;
-                        display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.82rem; color:#475569; font-weight:500;">
-                    {{ data.nb_courses }} cours disponible{{ data.nb_courses|pluralize }}
-                </span>
-                <span style="font-size:0.82rem; color:{% if data.nb_done > 0 %}#10b981{% else %}#0f172a{% endif %}; font-weight:600;">
-                    {{ data.nb_done }}/{{ data.nb_courses }} évalué{{ data.nb_done|pluralize }}
-                </span>
+            <div class="list-info">
+                <span class="text-secondary">{{ data.nb_courses }} cours disponible{{ data.nb_courses|pluralize }}</span>
+                <span class="fw-semibold {% if data.nb_done > 0 %}text-success{% else %}text-dark{% endif %}">{{ data.nb_done }}/{{ data.nb_courses }} évalué{{ data.nb_done|pluralize }}</span>
             </div>
         {% if data.all_done %}</div>{% else %}</a>{% endif %}
     {% endfor %}
     </div>
 {% else %}
-    <div class="card-dark p-4" style="text-align:center; color:#0f172a; font-weight:500;">
-        <div style="font-size:2rem; margin-bottom:0.5rem;"></div>
-        <p style="margin:0;">Aucune personne disponible pour votre département et niveau.</p>
-        <p style="font-size:0.85rem; margin-top:0.5rem; color:#475569;">
-            Vérifiez que des intervenants ont été assignés à vos cours.
-        </p>
+    <div class="card card-hover p-4 text-center text-dark">
+        <div class="display-4 mb-3"></div>
+        <p class="mb-0">Aucune personne disponible pour votre département et niveau.</p>
+        <p class="text-secondary mt-2">Vérifiez que des intervenants ont été assignés à vos cours.</p>
     </div>
 {% endif %}
 

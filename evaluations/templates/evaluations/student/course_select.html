@@ -14,32 +14,25 @@
     <div class="step"><div class="step-num">4</div> Confirmation</div>
 </div>
 
-<div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;">
-    <a href="{% url 'evaluation_teacher_list' %}" style="color:#6366f1; font-size:0.85rem;">← Retour</a>
-    <h2 style="font-size:1.2rem; font-weight:700; margin:0;">
-        Cours de {{ teacher.get_full_name|default:teacher.username }}
-    </h2>
+<div class="justify-between flex-wrap gap-3 mb-4">
+    <a href="{% url 'evaluation_teacher_list' %}" class="link-secondary">← Retour</a>
+    <h2 class="section-title mb-0">Cours de {{ teacher.get_full_name|default:teacher.username }}</h2>
 </div>
 
-<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1rem;">
+<div class="card-grid">
 {% for item in courses_data %}
     {% if item.evaluated %}
     <div class="eval-card done">
     {% else %}
     <a href="{% url 'evaluation_form' teacher.pk item.course.pk %}" class="eval-card">
     {% endif %}
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div style="font-weight:700; font-size:0.95rem; color:#0f172a; margin-bottom:0.4rem;">
-                {{ item.course.name }}
-            </div>
+        <div class="justify-between align-items-start mb-3">
+            <div class="fw-bold text-dark mb-0">{{ item.course.name }}</div>
             {% if item.evaluated %}
-                <span style="background:#064e3b; color:#6ee7b7; padding:0.2rem 0.6rem;
-                             border-radius:999px; font-size:0.72rem; font-weight:600;">
-                    Fait
-                </span>
+                <span class="badge-sm badge-success">Fait</span>
             {% endif %}
         </div>
-        <div style="font-size:0.82rem; color:#475569; display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:0.4rem; font-weight:500;">
+        <div class="text-secondary small d-flex flex-wrap gap-2 mt-2">
             <span>{{ item.course.level }}</span>
             <span>·</span>
             {% if item.course.is_general %}

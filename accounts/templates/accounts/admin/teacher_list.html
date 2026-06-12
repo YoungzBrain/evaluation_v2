@@ -5,14 +5,15 @@
 <div class="admin-page-header">
     <div>
         <h2>Personnes évaluées</h2>
-        <span style="color:#94a3b8; font-size:0.875rem;">{{ teachers|length }} personne{{ teachers|length|pluralize }} évaluée{{ teachers|length|pluralize }}</span>
+        <div class="text-muted-small">{{ teachers|length }} personne{{ teachers|length|pluralize }} évaluée{{ teachers|length|pluralize }}</div>
     </div>
-    <a href="{% url 'teacher_create' %}" class="btn-action btn-edit">Ajouter un évalué</a>
+    <a href="{% url 'teacher_create' %}" class="btn-primary-custom">Ajouter un évalué</a>
 </div>
 
-<div class="card-dark" style="overflow:hidden;">
+<div class="card">
 {% if teachers %}
-<table class="table-dark-custom">
+<div class="table-wrapper">
+<table class="table-custom">
     <thead>
         <tr>
             <th>Nom</th>
@@ -20,7 +21,7 @@
             <th>Departements</th>
             <th>Matieres</th>
             <th>Statut</th>
-            <th style="width:130px;">Action</th>
+            <th class="table-col-action">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -29,24 +30,22 @@
             <td>
                 <strong>{{ teacher.get_full_name|default:teacher.username }}</strong>
                 {% if not teacher.has_completed_profile %}
-                    <br><small style="color:#f59e0b;">Profil incomplet</small>
+                    <br><small class="muted">Profil incomplet</small>
                 {% endif %}
             </td>
-            <td style="color:#94a3b8; font-size:0.85rem;">{{ teacher.email }}</td>
+            <td class="text-muted-small">{{ teacher.email }}</td>
             <td>
                 {% if teacher.teacher_profile %}
                     {% with depts=teacher.teacher_profile.departments.all %}
                         {% if depts %}
-                            {% for d in depts %}<span style="color:#6366f1; font-size:0.8rem;">{{ d.name }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}
-                        {% else %}<span style="color:#475569;">—</span>{% endif %}
+                            {% for d in depts %}<span class="text-accent text-sm">{{ d.name }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %}<span class="text-secondary">—</span>{% endif %}
                     {% endwith %}
                 {% else %}
-                    <span style="color:#475569;">—</span>
+                    <span class="text-secondary">—</span>
                 {% endif %}
             </td>
-            <td style="color:#94a3b8; font-size:0.85rem;">
-                {{ teacher.teacher_courses.count }} matiere{{ teacher.teacher_courses.count|pluralize }}
-            </td>
+            <td class="text-muted-small">{{ teacher.teacher_courses.count }} matiere{{ teacher.teacher_courses.count|pluralize }}</td>
             <td>
                 {% if teacher.is_active %}
                     <span class="badge-active">Actif</span>
@@ -55,15 +54,11 @@
                 {% endif %}
             </td>
             <td>
-                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
-                    <a href="{% url 'teacher_edit' teacher.pk %}" class="btn-action btn-edit">Modifier</a>
-                    <form method="POST" action="{% url 'teacher_toggle' teacher.pk %}" style="margin:0;">
+                <div class="d-flex gap-1 flex-wrap">
+                    <a href="{% url 'teacher_edit' teacher.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
+                    <form method="POST" action="{% url 'teacher_toggle' teacher.pk %}">
                         {% csrf_token %}
-                        {% if teacher.is_active %}
-                            <button type="submit" class="btn-action btn-toggle-off">Desactiver</button>
-                        {% else %}
-                            <button type="submit" class="btn-action btn-toggle-on">Reactiver</button>
-                        {% endif %}
+                        <button type="submit" class="btn-sm btn-ghost {% if teacher.is_active %}badge-active{% else %}badge-inactive{% endif %}">{% if teacher.is_active %}Désactiver{% else %}Reactiver{% endif %}</button>
                     </form>
                 </div>
             </td>
@@ -71,6 +66,7 @@
     {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
     <div class="icon">�</div>

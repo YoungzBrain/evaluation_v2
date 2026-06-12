@@ -3,11 +3,9 @@
 
 {% block content %}
 <div class="d-flex justify-content-center">
-<div class="card-dark p-4" style="width:100%; max-width:480px;">
-    <h4 class="mb-1" style="font-weight:700;">Creer un compte</h4>
-    <p style="color:#94a3b8; font-size:0.875rem; margin-bottom:1.5rem;">
-        Choisissez votre role pour commencer
-    </p>
+<div class="card p-4 mw-480">
+    <h4 class="section-title mb-1">Créer un compte</h4>
+    <p class="muted mb-4">Choisissez votre rôle pour commencer</p>
 
     {% if messages %}
         {% for message in messages %}
@@ -54,13 +52,9 @@
 
         <input type="hidden" name="role" value="student">
 
-        <button type="submit" class="btn-primary-custom w-100 text-center">
-            Creer mon compte
-        </button>
+        <button type="submit" class="btn-primary-custom w-100 text-center">Créer mon compte</button>
 
-        <p class="text-center mt-3" style="color:#94a3b8; font-size:0.875rem;">
-            Deja inscrit ? <a href="{% url 'login' %}" style="color:#6366f1;">Se connecter</a>
-        </p>
+        <p class="text-center mt-3 muted">Déjà inscrit ? <a href="{% url 'login' %}" class="link-secondary">Se connecter</a></p>
     </form>
 </div>
 </div>

@@ -1,39 +1,17 @@
 {% extends 'accounts/admin/base_admin.html' %}
 {% block title %}Import CSV — Questions{% endblock %}
 
-{% block admin_extra_css %}
-<style>
-    .upload-zone {
-        border: 2px dashed #334155; border-radius: 12px; padding: 2.5rem;
-        text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s;
-    }
-    .upload-zone:hover, .upload-zone.dragover {
-        border-color: #6366f1; background: #1e1b4b11;
-    }
-    .upload-zone .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    .upload-zone .upload-hint { color: #64748b; font-size: 0.85rem; margin-top: 0.5rem; }
-    .csv-example {
-        background: #0f172a; border-radius: 8px; padding: 1rem 1.25rem;
-        font-family: monospace; font-size: 0.82rem; color: #7dd3fc;
-        border: 1px solid #1e293b; overflow-x: auto;
-    }
-    .rule-item {
-        display: flex; gap: 0.6rem; align-items: flex-start;
-        margin-bottom: 0.5rem; font-size: 0.85rem; color: #94a3b8;
-    }
-    .rule-item .dot { color: #6366f1; font-size: 1rem; line-height: 1.2; }
-</style>
-{% endblock %}
+{% block admin_extra_css %}{% endblock %}
 
 {% block admin_content %}
-<div style="max-width:680px;">
+<div class="mw-680">
 <div class="admin-page-header">
     <h2>Import CSV — Questions</h2>
     <a href="{% url 'question_list' %}" class="btn-action btn-edit">← Retour</a>
 </div>
 
 <div class="card-dark p-4 mb-4">
-    <h5 style="font-weight:700; color:#f1f5f9; margin-bottom:1rem;">Format attendu</h5>
+    <h5 class="section-heading">Format attendu</h5>
 
     <div class="csv-example mb-3">
 text,type,is_active<br>
@@ -42,12 +20,10 @@ text,type,is_active<br>
 "L'intervenant est ponctuel",scored,0
     </div>
 
-    <div style="margin-bottom:0.25rem; color:#64748b; font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
-        Règles
-    </div>
-    <div class="rule-item"><span class="dot">●</span><span><strong style="color:#f1f5f9;">text</strong> — obligatoire, texte de la question</span></div>
-    <div class="rule-item"><span class="dot">●</span><span><strong style="color:#f1f5f9;">type</strong> — <code>scored</code> (note 1-5) ou <code>open</code> (texte libre) — défaut : scored</span></div>
-    <div class="rule-item"><span class="dot">●</span><span><strong style="color:#f1f5f9;">is_active</strong> — <code>1</code> = active, <code>0</code> = inactive — défaut : 1</span></div>
+    <div class="text-muted-small text-uppercase fw-semibold mb-3">Règles</div>
+    <div class="rule-item"><span class="dot">●</span><span><strong class="text-white">text</strong> — obligatoire, texte de la question</span></div>
+    <div class="rule-item"><span class="dot">●</span><span><strong class="text-white">type</strong> — <code>scored</code> (note 1-5) ou <code>open</code> (texte libre) — défaut : scored</span></div>
+    <div class="rule-item"><span class="dot">●</span><span><strong class="text-white">is_active</strong> — <code>1</code> = active, <code>0</code> = inactive — défaut : 1</span></div>
     <div class="rule-item"><span class="dot">●</span><span>Les doublons (texte identique) sont ignorés automatiquement</span></div>
     <div class="rule-item"><span class="dot">●</span><span>Encodage : UTF-8 (avec ou sans BOM)</span></div>
 </div>
@@ -58,12 +34,12 @@ text,type,is_active<br>
 
         <div class="upload-zone mb-3" id="uploadZone" onclick="document.getElementById('csvFile').click()">
             <div class="upload-icon"></div>
-            <div style="color:#f1f5f9; font-weight:600;" id="uploadLabel">
+            <div class="fw-semibold text-white" id="uploadLabel">
                 Cliquez ou glissez-déposez votre fichier CSV ou PDF
             </div>
             <div class="upload-hint">Fichier .csv ou .pdf</div>
             <input type="file" name="csv_file" id="csvFile" accept=".csv,.pdf"
-                   style="display:none;" required>
+                   class="d-none" required>
         </div>
 
         <button type="submit" class="btn-primary-custom" id="submitBtn" disabled>

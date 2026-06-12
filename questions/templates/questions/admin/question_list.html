@@ -1,59 +1,33 @@
 {% extends 'accounts/admin/base_admin.html' %}
 {% block title %}Questions{% endblock %}
 
-{% block admin_extra_css %}
-<style>
-    .stats-row {
-        display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
-    }
-    .stat-card {
-        background: #1e293b; border-radius: 10px; padding: 1rem 1.5rem;
-        flex: 1; min-width: 120px; text-align: center;
-        border: 1px solid #334155;
-    }
-    .stat-card .stat-value {
-        font-size: 1.6rem; font-weight: 700; color: #f1f5f9;
-        line-height: 1;
-    }
-    .stat-card .stat-label {
-        font-size: 0.75rem; color: #64748b; margin-top: 0.3rem;
-        text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    .question-text {
-        max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .badge-scored { background: #1e3a5f; color: #93c5fd; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
-    .badge-open   { background: #2d1b69; color: #c4b5fd; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
-</style>
-{% endblock %}
+{% block admin_extra_css %}{% endblock %}
 
 {% block admin_content %}
 <div class="admin-page-header">
     <h2>Questions d'évaluation</h2>
     <div class="d-flex gap-2">
-        <a href="{% url 'question_import' %}" class="btn-action btn-toggle-on" style="padding:0.4rem 1rem;">
-            ↑ Import CSV
-        </a>
+        <a href="{% url 'question_import' %}" class="btn-primary-custom btn-sm btn-ghost">↑ Import CSV</a>
         <a href="{% url 'question_create' %}" class="btn-primary-custom">+ Nouvelle question</a>
     </div>
 </div>
 
 <!-- Statistiques rapides -->
 <div class="stats-row">
-    <div class="stat-card">
+    <div class="stat-card text-center">
         <div class="stat-value">{{ total }}</div>
         <div class="stat-label">Total</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-value" style="color:#6ee7b7;">{{ active_count }}</div>
+    <div class="stat-card text-center">
+        <div class="stat-value text-success">{{ active_count }}</div>
         <div class="stat-label">Actives</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-value" style="color:#93c5fd;">{{ scored_count }}</div>
+    <div class="stat-card text-center">
+        <div class="stat-value text-accent">{{ scored_count }}</div>
         <div class="stat-label">Notées (1-5)</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-value" style="color:#c4b5fd;">{{ open_count }}</div>
+    <div class="stat-card text-center">
+        <div class="stat-value text-secondary">{{ open_count }}</div>
         <div class="stat-label">Texte libre</div>
     </div>
 </div>
@@ -61,43 +35,39 @@
 <!-- Filtres -->
 <div class="filter-bar">
     <form method="GET" class="d-flex gap-2 align-items-center flex-wrap">
-        <select name="type" class="form-select form-select-sm" style="width:180px;"
-                onchange="this.form.submit()">
+        <select name="type" class="form-select filter-control" onchange="this.form.submit()">
             <option value="">Tous les types</option>
             <option value="scored" {% if filter_type == 'scored' %}selected{% endif %}>Notées (1-5)</option>
             <option value="open"   {% if filter_type == 'open'   %}selected{% endif %}>Texte libre</option>
         </select>
-        <select name="status" class="form-select form-select-sm" style="width:160px;"
-                onchange="this.form.submit()">
+        <select name="status" class="form-select filter-control" onchange="this.form.submit()">
             <option value="">Tous les statuts</option>
             <option value="active"   {% if filter_status == 'active'   %}selected{% endif %}>Actives</option>
             <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>Inactives</option>
         </select>
         {% if filter_type or filter_status %}
-            <a href="{% url 'question_list' %}" class="btn-action btn-edit" style="padding:0.3rem 0.8rem;">
-                Réinitialiser
-            </a>
+            <a href="{% url 'question_list' %}" class="btn-primary-custom btn-sm btn-ghost">Réinitialiser</a>
         {% endif %}
     </form>
 </div>
 
 <!-- Tableau -->
-<div class="card-dark" style="overflow:hidden;">
+<div class="card-dark p-0 table-wrapper">
 {% if questions %}
-<table class="table-dark-custom">
+<table class="table-custom">
     <thead>
         <tr>
             <th>#</th>
             <th>Texte de la question</th>
             <th>Type</th>
             <th>Statut</th>
-            <th style="width:210px;">Actions</th>
+            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for q in questions %}
         <tr>
-            <td style="color:#475569; font-size:0.8rem;">{{ q.id }}</td>
+            <td class="text-muted-small">{{ q.id }}</td>
             <td>
                 <span class="question-text" title="{{ q.text }}">{{ q.text }}</span>
             </td>
@@ -117,15 +87,14 @@
             </td>
             <td>
                 <div class="d-flex gap-1 flex-wrap">
-                    <a href="{% url 'question_edit' q.pk %}" class="btn-action btn-edit">Modifier</a>
-                    <form method="POST" action="{% url 'question_toggle' q.pk %}" style="display:inline;">
+                    <a href="{% url 'question_edit' q.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
+                    <form method="POST" action="{% url 'question_toggle' q.pk %}" class="d-inline">
                         {% csrf_token %}
-                        <button type="submit"
-                            class="btn-action {% if q.is_active %}btn-toggle-on{% else %}btn-toggle-off{% endif %}">
+                        <button type="submit" class="btn-sm btn-ghost {% if q.is_active %}badge-active{% else %}badge-inactive{% endif %}">
                             {% if q.is_active %}Désactiver{% else %}Activer{% endif %}
                         </button>
                     </form>
-                    <a href="{% url 'question_delete' q.pk %}" class="btn-action btn-delete">Suppr.</a>
+                    <a href="{% url 'question_delete' q.pk %}" class="btn-sm btn-danger-sm">Suppr.</a>
                 </div>
             </td>
         </tr>
@@ -138,10 +107,10 @@
     <p>
         {% if filter_type or filter_status %}
             Aucune question ne correspond aux filtres.
-            <a href="{% url 'question_list' %}" style="color:#6366f1;">Voir toutes</a>
+            <a href="{% url 'question_list' %}" class="link-secondary">Voir toutes</a>
         {% else %}
-            Aucune question. <a href="{% url 'question_create' %}" style="color:#6366f1;">Créer la première</a>
-            ou <a href="{% url 'question_import' %}" style="color:#6366f1;">importer depuis un CSV</a>.
+            Aucune question. <a href="{% url 'question_create' %}" class="link-secondary">Créer la première</a>
+            ou <a href="{% url 'question_import' %}" class="link-secondary">importer depuis un CSV</a>.
         {% endif %}
     </p>
 </div>

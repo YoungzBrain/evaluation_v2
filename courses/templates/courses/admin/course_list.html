@@ -9,7 +9,7 @@
 
 <div class="filter-bar">
     <form method="GET" class="d-flex align-items-center gap-2">
-        <label style="color:#94a3b8; font-size:0.875rem; white-space:nowrap;">Filtrer par departement :</label>
+        <label class="text-muted-small text-nowrap">Filtrer par département :</label>
         <select name="department" class="form-select" onchange="this.form.submit()">
             <option value="">Tous les departements</option>
             {% for dept in departments %}
@@ -19,14 +19,15 @@
             {% endfor %}
         </select>
         {% if dept_filter %}
-            <a href="{% url 'course_list' %}" class="btn-action btn-edit" style="white-space:nowrap;">Effacer</a>
+            <a href="{% url 'course_list' %}" class="btn-primary-custom btn-sm text-nowrap">Effacer</a>
         {% endif %}
     </form>
 </div>
 
-<div class="card-dark" style="overflow:hidden;">
+<div class="card">
 {% if courses %}
-<table class="table-dark-custom">
+<div class="table-wrapper">
+<table class="table-custom">
     <thead>
         <tr>
             <th>Matiere</th>
@@ -35,23 +36,23 @@
             <th>Type</th>
             <th>Specialisation</th>
             <th>Statut</th>
-            <th style="width:200px;">Actions</th>
+            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for course in courses %}
         <tr>
             <td><strong>{{ course.name }}</strong></td>
-            <td style="color:#6366f1;">{{ course.department.name }}</td>
+            <td class="text-accent">{{ course.department.name }}</td>
             <td>{{ course.level.name }}</td>
             <td>
                 {% if course.is_general %}
-                    <span style="color:#10b981; font-size:0.8rem;">General</span>
+                    <span class="text-success text-sm">Général</span>
                 {% else %}
-                    <span style="color:#f59e0b; font-size:0.8rem;">Specialise</span>
+                    <span class="text-warning text-sm">Spécialisé</span>
                 {% endif %}
             </td>
-            <td style="color:#94a3b8; font-size:0.85rem;">{{ course.specialization.name|default:"—" }}</td>
+            <td class="text-muted-small">{{ course.specialization.name|default:"—" }}</td>
             <td>
                 {% if course.is_active %}
                     <span class="badge-active">Actif</span>
@@ -61,27 +62,23 @@
             </td>
             <td>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="{% url 'course_edit' course.pk %}" class="btn-action btn-edit">Modifier</a>
-                    <form method="POST" action="{% url 'course_toggle' course.pk %}" style="display:inline;">
+                    <a href="{% url 'course_edit' course.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
+                    <form method="POST" action="{% url 'course_toggle' course.pk %}">
                         {% csrf_token %}
-                        {% if course.is_active %}
-                            <button type="submit" class="btn-action btn-toggle-off">Desactiver</button>
-                        {% else %}
-                            <button type="submit" class="btn-action btn-toggle-on">Activer</button>
-                        {% endif %}
+                        <button type="submit" class="btn-sm btn-ghost {% if course.is_active %}badge-active{% else %}badge-inactive{% endif %}">{% if course.is_active %}Désactiver{% else %}Activer{% endif %}</button>
                     </form>
-                    <a href="{% url 'course_delete' course.pk %}" class="btn-action btn-delete">Supprimer</a>
+                    <a href="{% url 'course_delete' course.pk %}" class="btn-danger-sm">Supprimer</a>
                 </div>
             </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
     <div class="icon"></div>
-    <p>Aucune matiere{% if dept_filter %} pour ce departement{% endif %}.
-       <a href="{% url 'course_create' %}" style="color:#6366f1;">En creer une</a>.</p>
+    <p>Aucune matière{% if dept_filter %} pour ce département{% endif %}. <a href="{% url 'course_create' %}" class="link-secondary">En créer une</a>.</p>
 </div>
 {% endif %}
 </div>

@@ -14,58 +14,51 @@
     <div class="step active"><div class="step-num">4</div> Confirmation</div>
 </div>
 
-<div style="max-width:520px; margin: 0 auto; text-align:center; padding-top:1rem;">
-    <div style="font-size:3rem; margin-bottom:1rem;"></div>
-    <h2 style="font-size:1.3rem; font-weight:700; color:#0f172a; margin-bottom:0.5rem;">
-        Évaluation soumise avec succès !
-    </h2>
-    <p style="color:#475569; font-size:0.9rem; margin-bottom:1.5rem; font-weight:500;">
-        Votre évaluation a bien été enregistrée et est anonyme.
-    </p>
-
-    <!-- Récap -->
-    <div class="card-dark p-4 mb-4" style="text-align:left;">
-        <div style="display:flex; gap:0.5rem; margin-bottom:0.6rem;">
-            <span style="color:#475569; font-size:0.85rem; min-width:90px; font-weight:500;">Personne évaluée</span>
-            <span style="color:#0f172a; font-size:0.85rem; font-weight:700;">
-                {{ evaluation.teacher.get_full_name|default:evaluation.teacher.username }}
-            </span>
-        </div>
-        <div style="display:flex; gap:0.5rem; margin-bottom:0.6rem;">
-            <span style="color:#475569; font-size:0.85rem; min-width:90px; font-weight:500;">Cours</span>
-            <span style="color:#0f172a; font-size:0.85rem; font-weight:700;">
-                {{ evaluation.course.name }}
-            </span>
-        </div>
-        <div style="display:flex; gap:0.5rem; margin-bottom:0.6rem;">
-            <span style="color:#475569; font-size:0.85rem; min-width:90px; font-weight:500;">Département</span>
-            <span style="color:#0f172a; font-size:0.85rem; font-weight:500;">
-                {{ evaluation.course.department }}
-            </span>
-        </div>
-        <div style="display:flex; gap:0.5rem;">
-            <span style="color:#475569; font-size:0.85rem; min-width:90px; font-weight:500;">Soumis le</span>
-            <span style="color:#0f172a; font-size:0.85rem; font-weight:500;">
-                {{ evaluation.updated_at|date:"d/m/Y à H:i" }}
-            </span>
-        </div>
-
-        {% if evaluation.pdf %}
-        <div style="border-top:1px solid #cbd5e1; margin-top:0.75rem; padding-top:0.75rem;">
-            <span style="color:#10b981; font-size:0.82rem; font-weight:600;">PDF généré automatiquement</span>
-        </div>
-        {% endif %}
+<div class="mx-auto mw-520">
+    <div class="text-center pt-4">
+        <div class="display-4 mb-3"></div>
+        <h2 class="section-title mb-2">Évaluation soumise avec succès !</h2>
+        <p class="text-secondary mb-4">Votre évaluation a bien été enregistrée et est anonyme.</p>
     </div>
 
-    <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
-        <a href="{% url 'evaluation_teacher_list' %}" class="btn-primary-custom">
-            Évaluer une autre personne
-        </a>
-        <a href="{% url 'student_dashboard' %}"
-           style="padding:0.6rem 1.5rem; border-radius:8px; font-weight:600; font-size:0.9rem;
-                  border:1px solid #cbd5e1; color:#0f172a; text-decoration:none; background:#ffffff;">
-            Dashboard
-        </a>
+    <!-- Récap -->
+    <div class="card card-hover p-4 mb-4">
+        <div class="row gy-3">
+            <div class="col-12">
+            <div class="meta-row">
+                <span class="meta-label">Personne évaluée</span>
+                <span class="meta-value">{{ evaluation.teacher.get_full_name|default:evaluation.teacher.username }}</span>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="meta-row">
+                <span class="meta-label">Cours</span>
+                <span class="meta-value">{{ evaluation.course.name }}</span>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="meta-row">
+                <span class="meta-label">Département</span>
+                <span class="meta-value">{{ evaluation.course.department }}</span>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="meta-row">
+                <span class="meta-label">Soumis le</span>
+                <span class="meta-value">{{ evaluation.updated_at|date:"d/m/Y à H:i" }}</span>
+            </div>
+        </div>
+            {% if evaluation.pdf %}
+            <div class="col-12 border-top pt-3">
+                <span class="badge-sm badge-success">PDF généré automatiquement</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="{% url 'evaluation_teacher_list' %}" class="btn-primary-custom">Évaluer une autre personne</a>
+        <a href="{% url 'student_dashboard' %}" class="btn-secondary-custom">Dashboard</a>
     </div>
 </div>
 

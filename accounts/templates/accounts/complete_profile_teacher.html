@@ -1,41 +1,20 @@
 {% extends 'accounts/base.html' %}
 {% block title %}Completer mon profil d'intervenant{% endblock %}
 
-{% block extra_css %}
-<style>
-    .dept-courses-section {
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-top: 0.5rem;
-    }
-    .course-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0;
-        border-bottom: 1px solid #1e293b;
-    }
-    .course-item:last-child { border-bottom: none; }
-    .form-check-input { cursor: pointer; }
-</style>
-{% endblock %}
+{% block extra_css %}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-center">
-<div class="card-dark p-4" style="width:100%; max-width:620px;">
-    <h4 class="mb-1" style="font-weight:700;">Completer mon profil d'intervenant</h4>
-    <p style="color:#94a3b8; font-size:0.875rem; margin-bottom:1.5rem;">
-        Selectionnez vos departements et les matieres que vous encadrez.
-    </p>
+<div class="card card-hover p-4 mw-620">
+    <h4 class="section-title mb-1">Completer mon profil d'intervenant</h4>
+    <p class="text-secondary mb-4">Selectionnez vos departements et les matieres que vous encadrez.</p>
 
     <form method="POST">
         {% csrf_token %}
 
         <div class="mb-3">
             <label class="form-label">Departements (selection multiple)</label>
-            <div class="card-dark p-3" style="max-height:200px; overflow-y:auto;">
+            <div class="card-dark p-3 scroll-panel">
                 {% for dept in departments %}
                     <div class="form-check mb-1">
                         <input class="form-check-input dept-checkbox"
@@ -44,7 +23,7 @@
                                id="dept_{{ dept.pk }}"
                                data-dept-id="{{ dept.pk }}"
                                data-dept-name="{{ dept.name }}">
-                        <label class="form-check-label" for="dept_{{ dept.pk }}" style="color:#f1f5f9;">
+                        <label class="form-check-label" for="dept_{{ dept.pk }}">
                             {{ dept.name }}
                         </label>
                     </div>
@@ -92,7 +71,7 @@ function updateCourseSections() {
         const section = document.createElement('div');
         section.className = 'mb-3';
         section.innerHTML = `
-            <label class="form-label" style="color:#6366f1; font-weight:600;">
+            <label class="form-label text-accent fw-bold">
                 Matieres — ${deptName}
             </label>
             <div class="dept-courses-section">
@@ -100,9 +79,9 @@ function updateCourseSections() {
                     <div class="course-item">
                         <input class="form-check-input" type="checkbox"
                                name="courses" value="${c.id}" id="course_${c.id}">
-                        <label for="course_${c.id}" style="color:#f1f5f9; font-size:0.9rem; cursor:pointer;">
+                        <label for="course_${c.id}" class="text-light small">
                             ${c.name}
-                            <span style="color:#475569; font-size:0.78rem;">(${c.level})</span>
+                            <span class="text-secondary small">(${c.level})</span>
                         </label>
                     </div>
                 `).join('')}

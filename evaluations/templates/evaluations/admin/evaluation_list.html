@@ -1,19 +1,7 @@
 {% extends 'accounts/admin/base_admin.html' %}
 {% block title %}Toutes les évaluations{% endblock %}
 
-{% block admin_extra_css %}
-<style>
-    .stats-strip {
-        display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;
-    }
-    .stat-pill {
-        background: #0f172a; border: 1px solid #334155;
-        border-radius: 8px; padding: 0.5rem 1rem;
-        font-size: 0.85rem; color: #94a3b8;
-    }
-    .stat-pill strong { color: #f1f5f9; }
-</style>
-{% endblock %}
+{% block admin_extra_css %}{% endblock %}
 
 {% block admin_content %}
 <div class="admin-page-header">
@@ -25,16 +13,16 @@
 <div class="filter-bar mb-3">
     <form method="get" class="d-flex gap-2 flex-wrap align-items-center">
         <input type="text" name="q" value="{{ search }}" placeholder="Rechercher..."
-               class="form-control" style="max-width:200px; font-size:0.85rem;">
+               class="form-control filter-control">
 
-        <select name="dept" class="form-select" style="max-width:200px; font-size:0.85rem;" onchange="this.form.submit()">
+        <select name="dept" class="form-select filter-control" onchange="this.form.submit()">
             <option value="">Tous les dép.</option>
             {% for d in departments %}
                 <option value="{{ d.pk }}" {% if dept_filter == d.pk|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>
             {% endfor %}
         </select>
 
-        <select name="teacher" class="form-select" style="max-width:200px; font-size:0.85rem;" onchange="this.form.submit()">
+        <select name="teacher" class="form-select filter-control" onchange="this.form.submit()">
             <option value="">Tous les ens.</option>
             {% for t in teachers %}
                 <option value="{{ t.pk }}" {% if teacher_filter == t.pk|stringformat:"s" %}selected{% endif %}>{{ t.get_full_name|default:t.username }}</option>
@@ -49,7 +37,7 @@
 </div>
 
 {% if evaluations %}
-<div class="card-dark p-0" style="overflow:hidden;">
+<div class="card-dark p-0 table-wrapper">
     <table class="table-dark-custom">
         <thead>
             <tr>
@@ -66,24 +54,24 @@
         <tbody>
             {% for ev in evaluations %}
             <tr>
-                <td style="color:#475569;">{{ ev.pk }}</td>
+                <td class="text-secondary">{{ ev.pk }}</td>
                 <td>
                     <a href="{% url 'admin_teacher_scores' teacher_pk=ev.teacher.pk %}"
-                       style="color:#6366f1; text-decoration:none; font-weight:600;">
+                       class="link-secondary fw-semibold">
                         {{ ev.teacher.get_full_name|default:ev.teacher.username }}
                     </a>
                 </td>
                 <td>{{ ev.course.name }}</td>
                 <td>{{ ev.course.department }}</td>
-                <td style="color:#94a3b8;">{{ ev.student.get_full_name|default:ev.student.username }}</td>
-                <td style="color:#64748b; font-size:0.8rem;">{{ ev.created_at|date:"d/m/Y H:i" }}</td>
+                <td class="text-secondary">{{ ev.student.get_full_name|default:ev.student.username }}</td>
+                <td class="text-secondary-small">{{ ev.created_at|date:"d/m/Y H:i" }}</td>
                 <td>
                     {% if ev.pdf %}
-                        <a href="{% url 'admin_download_pdf' pk=ev.pk %}" class="btn-action btn-toggle-on" style="font-size:0.75rem;">
+                        <a href="{% url 'admin_download_pdf' pk=ev.pk %}" class="btn-action btn-toggle-on btn-action-sm">
                             ⬇ PDF
                         </a>
                     {% else %}
-                        <span style="color:#475569; font-size:0.78rem;">—</span>
+                        <span class="text-secondary-small">—</span>
                     {% endif %}
                 </td>
                 <td>
