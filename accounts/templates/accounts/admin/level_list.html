@@ -15,20 +15,13 @@
         <tr>
             <th class="table-col-small">Ordre</th>
             <th>Nom</th>
-            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for level in levels %}
-        <tr>
+        <tr class="table-row-link" onclick="window.location='{% url 'level_edit' level.pk %}'">
             <td class="text-muted text-center">{{ level.order }}</td>
             <td><strong>{{ level.name }}</strong></td>
-            <td>
-                <div class="d-flex gap-2">
-                    <a href="{% url 'level_edit' level.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
-                    <a href="{% url 'level_delete' level.pk %}" class="btn-danger-sm">Supprimer</a>
-                </div>
-            </td>
         </tr>
     {% endfor %}
     </tbody>

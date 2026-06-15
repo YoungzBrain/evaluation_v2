@@ -50,5 +50,19 @@
             </div>
         </div>
     </form>
+
+    {% if teacher %}
+    <div class="mt-4 border-top pt-4">
+        <h3 class="section-title" style="font-size:1rem;">Actions</h3>
+        <div class="d-flex flex-wrap gap-2">
+            <form method="POST" action="{% url 'teacher_toggle' teacher.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-sm btn-ghost {% if teacher.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                    {% if teacher.is_active %}Désactiver{% else %}Réactiver{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -56,6 +56,21 @@
             <a href="{% url 'question_list' %}" class="btn-sm btn-secondary-custom">Annuler</a>
         </div>
     </form>
+
+    {% if object %}
+    <div class="mt-4 border-top pt-4">
+        <h3 class="section-title" style="font-size:1rem;">Actions</h3>
+        <div class="d-flex flex-wrap gap-2">
+            <form method="POST" action="{% url 'question_toggle' object.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-sm btn-ghost {% if object.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                    {% if object.is_active %}Désactiver{% else %}Activer{% endif %}
+                </button>
+            </form>
+            <a href="{% url 'question_delete' object.pk %}" class="btn-danger-sm">Supprimer</a>
+        </div>
+    </div>
+    {% endif %}
 </div>
 </div>
 

@@ -33,21 +33,14 @@
             <th>Specialisation</th>
             <th>Departement</th>
             <th>Description</th>
-            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for spec in specializations %}
-        <tr>
+        <tr class="table-row-link" onclick="window.location='{% url 'specialization_edit' spec.pk %}'">
             <td><strong>{{ spec.name }}</strong></td>
             <td class="text-accent">{{ spec.department.name }}</td>
             <td class="muted">{{ spec.description|default:"—" }}</td>
-            <td>
-                <div class="d-flex gap-2">
-                    <a href="{% url 'specialization_edit' spec.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
-                    <a href="{% url 'specialization_delete' spec.pk %}" class="btn-danger-sm">Supprimer</a>
-                </div>
-            </td>
         </tr>
     {% endfor %}
     </tbody>

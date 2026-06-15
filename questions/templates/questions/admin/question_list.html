@@ -7,7 +7,7 @@
 <div class="admin-page-header">
     <h2>Questions d'évaluation</h2>
     <div class="d-flex gap-2">
-        <a href="{% url 'question_import' %}" class="btn-primary-custom btn-sm btn-ghost">↑ Import CSV</a>
+        <a href="{% url 'question_import' %}" class="btn-primary-custom btn-sm">↑ Import CSV</a>
         <a href="{% url 'question_create' %}" class="btn-primary-custom">+ Nouvelle question</a>
     </div>
 </div>
@@ -61,12 +61,11 @@
             <th>Texte de la question</th>
             <th>Type</th>
             <th>Statut</th>
-            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for q in questions %}
-        <tr>
+        <tr class="table-row-link" onclick="window.location='{% url 'question_edit' q.pk %}'">
             <td class="text-muted-small">{{ q.id }}</td>
             <td>
                 <span class="question-text" title="{{ q.text }}">{{ q.text }}</span>
@@ -84,18 +83,6 @@
                 {% else %}
                     <span class="badge-inactive">Inactive</span>
                 {% endif %}
-            </td>
-            <td>
-                <div class="d-flex gap-1 flex-wrap">
-                    <a href="{% url 'question_edit' q.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
-                    <form method="POST" action="{% url 'question_toggle' q.pk %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-sm btn-ghost {% if q.is_active %}badge-active{% else %}badge-inactive{% endif %}">
-                            {% if q.is_active %}Désactiver{% else %}Activer{% endif %}
-                        </button>
-                    </form>
-                    <a href="{% url 'question_delete' q.pk %}" class="btn-sm btn-danger-sm">Suppr.</a>
-                </div>
             </td>
         </tr>
     {% endfor %}

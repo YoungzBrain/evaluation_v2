@@ -125,6 +125,8 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--text);-webkit
 .stat-card .stat-label{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#475569}
 .filter-control{max-width:200px;font-size:0.85rem}
 .table-wrapper{overflow:auto}
+.table-row-link{cursor:pointer;transition:background-color 0.15s ease}
+.table-row-link:hover{background:rgba(37,99,235,0.08)}
 .table-col-action{width:210px}
 .table-col-small{width:100px}
 .btn-danger-sm{background:#991b1b;color:#fff;border-radius:6px;padding:0.28rem 0.6rem;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}

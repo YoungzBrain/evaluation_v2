@@ -36,12 +36,11 @@
             <th>Type</th>
             <th>Specialisation</th>
             <th>Statut</th>
-            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for course in courses %}
-        <tr>
+        <tr class="table-row-link" onclick="window.location='{% url 'course_edit' course.pk %}'">
             <td><strong>{{ course.name }}</strong></td>
             <td class="text-accent">{{ course.department.name }}</td>
             <td>{{ course.level.name }}</td>
@@ -59,16 +58,6 @@
                 {% else %}
                     <span class="badge-inactive">Inactif</span>
                 {% endif %}
-            </td>
-            <td>
-                <div class="d-flex gap-2 flex-wrap">
-                    <a href="{% url 'course_edit' course.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
-                    <form method="POST" action="{% url 'course_toggle' course.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-sm btn-ghost {% if course.is_active %}badge-active{% else %}badge-inactive{% endif %}">{% if course.is_active %}Désactiver{% else %}Activer{% endif %}</button>
-                    </form>
-                    <a href="{% url 'course_delete' course.pk %}" class="btn-danger-sm">Supprimer</a>
-                </div>
             </td>
         </tr>
     {% endfor %}

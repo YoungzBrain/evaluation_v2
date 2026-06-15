@@ -21,12 +21,11 @@
             <th>Departements</th>
             <th>Matieres</th>
             <th>Statut</th>
-            <th class="table-col-action">Action</th>
         </tr>
     </thead>
     <tbody>
     {% for teacher in teachers %}
-        <tr>
+        <tr class="table-row-link" onclick="window.location='{% url 'teacher_edit' teacher.pk %}'">
             <td>
                 <strong>{{ teacher.get_full_name|default:teacher.username }}</strong>
                 {% if not teacher.has_completed_profile %}
@@ -52,15 +51,6 @@
                 {% else %}
                     <span class="badge-inactive">Desactive</span>
                 {% endif %}
-            </td>
-            <td>
-                <div class="d-flex gap-1 flex-wrap">
-                    <a href="{% url 'teacher_edit' teacher.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
-                    <form method="POST" action="{% url 'teacher_toggle' teacher.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-sm btn-ghost {% if teacher.is_active %}badge-active{% else %}badge-inactive{% endif %}">{% if teacher.is_active %}Désactiver{% else %}Reactiver{% endif %}</button>
-                    </form>
-                </div>
             </td>
         </tr>
     {% endfor %}

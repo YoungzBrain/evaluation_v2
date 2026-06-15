@@ -25,6 +25,15 @@
             <a href="{% url 'department_list' %}" class="btn-secondary-custom btn-sm">Annuler</a>
         </div>
     </form>
+
+    {% if object %}
+    <div class="mt-4 border-top pt-4">
+        <h3 class="section-title" style="font-size:1rem;">Actions</h3>
+        <div class="d-flex gap-2">
+            <a href="{% url 'department_delete' object.pk %}" class="btn-danger-sm">Supprimer</a>
+        </div>
+    </div>
+    {% endif %}
 </div>
 </div>
 {% endblock %}

@@ -48,34 +48,35 @@
                 <th>Étudiant</th>
                 <th>Date</th>
                 <th>PDF</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for ev in evaluations %}
-            <tr>
+            <tr class="table-row-link" onclick="window.location='{% url 'admin_evaluation_detail' pk=ev.pk %}'">
                 <td class="text-secondary">{{ ev.pk }}</td>
                 <td>
                     <a href="{% url 'admin_teacher_scores' teacher_pk=ev.teacher.pk %}"
-                       class="link-secondary fw-semibold">
+                       class="link-secondary fw-semibold" onclick="event.stopPropagation()">
                         {{ ev.teacher.get_full_name|default:ev.teacher.username }}
                     </a>
                 </td>
-                <td>{{ ev.course.name }}</td>
+                <td>
+                    <a href="{% url 'admin_course_detail' teacher_pk=ev.teacher.pk course_pk=ev.course.pk %}"
+                       class="link-secondary" onclick="event.stopPropagation()">
+                        {{ ev.course.name }}
+                    </a>
+                </td>
                 <td>{{ ev.course.department }}</td>
                 <td class="text-secondary">{{ ev.student.get_full_name|default:ev.student.username }}</td>
                 <td class="text-secondary-small">{{ ev.created_at|date:"d/m/Y H:i" }}</td>
                 <td>
                     {% if ev.pdf %}
-                        <a href="{% url 'admin_download_pdf' pk=ev.pk %}" class="btn-action btn-toggle-on btn-action-sm">
+                        <a href="{% url 'admin_download_pdf' pk=ev.pk %}" class="btn-action btn-toggle-on btn-action-sm" onclick="event.stopPropagation()">
                             ⬇ PDF
                         </a>
                     {% else %}
                         <span class="text-secondary-small">—</span>
                     {% endif %}
-                </td>
-                <td>
-                    <a href="{% url 'admin_evaluation_detail' pk=ev.pk %}" class="btn-action btn-edit">Détail</a>
                 </td>
             </tr>
             {% endfor %}

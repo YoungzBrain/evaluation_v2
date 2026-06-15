@@ -16,12 +16,11 @@
             <th>Nom</th>
             <th>Description</th>
             <th>Specialisations</th>
-            <th class="table-col-action">Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for dept in departments %}
-        <tr>
+        <tr class="table-row-link" onclick="window.location='{% url 'department_edit' dept.pk %}'">
             <td><strong>{{ dept.name }}</strong></td>
             <td class="muted">{{ dept.description|default:"—" }}</td>
             <td>
@@ -32,12 +31,6 @@
                         <span class="muted">Aucune</span>
                     {% endif %}
                 {% endwith %}
-            </td>
-            <td>
-                <div class="d-flex gap-2">
-                    <a href="{% url 'department_edit' dept.pk %}" class="btn-primary-custom btn-sm">Modifier</a>
-                    <a href="{% url 'department_delete' dept.pk %}" class="btn-danger-sm">Supprimer</a>
-                </div>
             </td>
         </tr>
     {% endfor %}
