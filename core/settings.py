@@ -89,11 +89,26 @@ CSRF_TRUSTED_ORIGINS = [
 
 from django.core.exceptions import ImproperlyConfigured
 
+
+def env_any(*keys, default=''):
+    for key in keys:
+        value = os.environ.get(key)
+        if value:
+            return value
+    return default
+
+
 def parse_database_url(url):
     parsed = urllib.parse.urlparse(url)
-    if parsed.scheme not in ('mysql', 'mysql+pymysql', 'mysqlclient', 'mysql+mysqlclient'):
+    if parsed.scheme not in (
+        'mysql',
+        'mysql+pymysql',
+        'mysqlclient',
+        'mysql+mysqlclient',
+        'mysql+mysqlconnector',
+    ):
         raise ImproperlyConfigured(
-            'DATABASE_URL must use mysql://, mysql+pymysql://, mysqlclient://, or mysql+mysqlclient:// scheme.'
+            'DATABASE_URL must use mysql://, mysql+pymysql://, mysqlclient://, mysql+mysqlclient://, or mysql+mysqlconnector:// scheme.'
         )
 
     if not parsed.path or parsed.path == '/':
@@ -111,48 +126,56 @@ def parse_database_url(url):
         'PORT': str(parsed.port or 3306),
     }
 
-DATABASE_URL = (
-    os.environ.get('DATABASE_URL')
-    or os.environ.get('MYSQL_URL')
-    or os.environ.get('RAILWAY_DATABASE_URL')
-    or os.environ.get('RAILWAY_MYSQL_URL')
+DATABASE_URL = env_any(
+    'DATABASE_URL',
+    'MYSQL_URL',
+    'MYSQL_URI',
+    'MYSQL_CONNECTION_URL',
+    'MYSQL_CONNECTION_URI',
+    'RAILWAY_DATABASE_URL',
+    'RAILWAY_MYSQL_URL',
+    'RAILWAY_MYSQL_CONNECTION_URL',
+    'RAILWAY_MYSQL_CONNECTION_URI',
 )
 if DATABASE_URL:
     database_config = parse_database_url(DATABASE_URL)
 else:
     database_config = {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': (
-            os.environ.get('DB_NAME')
-            or os.environ.get('MYSQL_DATABASE')
-            or os.environ.get('RAILWAY_MYSQL_DATABASE', '')
+        'NAME': env_any(
+            'DB_NAME',
+            'MYSQL_DATABASE',
+            'MYSQL_DB',
+            'RAILWAY_MYSQL_DATABASE',
+            'RAILWAY_DATABASE',
         ),
-        'USER': (
-            os.environ.get('DB_USER')
-            or os.environ.get('MYSQL_USER')
-            or os.environ.get('RAILWAY_MYSQL_USER', '')
+        'USER': env_any(
+            'DB_USER',
+            'MYSQL_USER',
+            'MYSQL_USERNAME',
+            'RAILWAY_MYSQL_USER',
         ),
-        'PASSWORD': (
-            os.environ.get('DB_PASSWORD')
-            or os.environ.get('MYSQL_PASSWORD')
-            or os.environ.get('RAILWAY_MYSQL_PASSWORD', '')
+        'PASSWORD': env_any(
+            'DB_PASSWORD',
+            'MYSQL_PASSWORD',
+            'RAILWAY_MYSQL_PASSWORD',
         ),
-        'HOST': (
-            os.environ.get('DB_HOST')
-            or os.environ.get('MYSQL_HOST')
-            or os.environ.get('RAILWAY_MYSQL_HOST', '')
+        'HOST': env_any(
+            'DB_HOST',
+            'MYSQL_HOST',
+            'RAILWAY_MYSQL_HOST',
         ),
-        'PORT': (
-            os.environ.get('DB_PORT')
-            or os.environ.get('MYSQL_PORT')
-            or os.environ.get('RAILWAY_MYSQL_PORT', '3306')
-        ),
+        'PORT': env_any(
+            'DB_PORT',
+            'MYSQL_PORT',
+            'RAILWAY_MYSQL_PORT',
+        ) or '3306',
     }
 
 required_database_fields = {
-    'DATABASE_URL or MYSQL_URL or RAILWAY_DATABASE_URL or RAILWAY_MYSQL_URL': DATABASE_URL,
-    'DB_NAME or MYSQL_DATABASE or RAILWAY_MYSQL_DATABASE': database_config['NAME'],
-    'DB_USER or MYSQL_USER or RAILWAY_MYSQL_USER': database_config['USER'],
+    'DATABASE_URL or MYSQL_URL or MYSQL_CONNECTION_URL or RAILWAY_DATABASE_URL or RAILWAY_MYSQL_URL': DATABASE_URL,
+    'DB_NAME or MYSQL_DATABASE or MYSQL_DB or RAILWAY_MYSQL_DATABASE': database_config['NAME'],
+    'DB_USER or MYSQL_USER or MYSQL_USERNAME or RAILWAY_MYSQL_USER': database_config['USER'],
     'DB_PASSWORD or MYSQL_PASSWORD or RAILWAY_MYSQL_PASSWORD': database_config['PASSWORD'],
     'DB_HOST or MYSQL_HOST or RAILWAY_MYSQL_HOST': database_config['HOST'],
 }
