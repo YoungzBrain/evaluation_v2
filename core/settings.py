@@ -87,10 +87,17 @@ CSRF_TRUSTED_ORIGINS = [
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+from django.core.exceptions import ImproperlyConfigured
+
 def parse_database_url(url):
     parsed = urllib.parse.urlparse(url)
     if parsed.scheme not in ('mysql', 'mysql+pymysql', 'mysqlclient'):
-        return None
+        raise ImproperlyConfigured(
+            'DATABASE_URL must use mysql://, mysql+pymysql://, or mysqlclient:// scheme.'
+        )
+
+    if not parsed.path or parsed.path == '/':
+        raise ImproperlyConfigured('DATABASE_URL must include a database name.')
 
     return {
         'ENGINE': 'django.db.backends.mysql',
@@ -107,12 +114,33 @@ if DATABASE_URL:
 else:
     database_config = {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', os.environ.get('MYSQL_DATABASE', 'evaluation_v2')),
-        'USER': os.environ.get('DB_USER', os.environ.get('MYSQL_USER', 'root')),
-        'PASSWORD': os.environ.get('DB_PASSWORD', os.environ.get('MYSQL_PASSWORD', 'Str1pp1d.')),
-        'HOST': os.environ.get('DB_HOST', os.environ.get('MYSQL_HOST', '127.0.0.1')),
+        'NAME': os.environ.get('DB_NAME', os.environ.get('MYSQL_DATABASE', '')),
+        'USER': os.environ.get('DB_USER', os.environ.get('MYSQL_USER', '')),
+        'PASSWORD': os.environ.get('DB_PASSWORD', os.environ.get('MYSQL_PASSWORD', '')),
+        'HOST': os.environ.get('DB_HOST', os.environ.get('MYSQL_HOST', '')),
         'PORT': os.environ.get('DB_PORT', os.environ.get('MYSQL_PORT', '3306')),
     }
+
+if not DEBUG:
+    missing = [
+        key for key, value in {
+            'DATABASE_URL or MYSQL_URL': DATABASE_URL,
+            'DB_NAME or MYSQL_DATABASE': database_config['NAME'],
+            'DB_USER or MYSQL_USER': database_config['USER'],
+            'DB_PASSWORD or MYSQL_PASSWORD': database_config['PASSWORD'],
+            'DB_HOST or MYSQL_HOST': database_config['HOST'],
+        }.items()
+        if not value
+    ]
+    if missing:
+        raise ImproperlyConfigured(
+            'Missing required database environment variables: ' + ', '.join(missing)
+        )
+
+if not database_config['HOST']:
+    database_config['HOST'] = '127.0.0.1'
+if not database_config['PORT']:
+    database_config['PORT'] = '3306'
 
 DATABASES = {
     'default': database_config,
