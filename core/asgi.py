@@ -9,6 +9,13 @@ https://docs.djangoproject.com/en/6.0/howto/deployment/asgi/
 
 import os
 
+# Use PyMySQL as MySQL driver instead of mysqlclient
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
