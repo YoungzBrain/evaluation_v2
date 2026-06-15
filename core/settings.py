@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-+y7zvpj075j2q*^s#yu113s^#83&o86t6lgc%8bk8i$j26a&8n')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in ('1', 'true', 'yes')
 
 raw_allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '*')
 ALLOWED_HOSTS = [host.strip() for host in raw_allowed_hosts.split(',') if host.strip()]
@@ -91,24 +91,32 @@ from django.core.exceptions import ImproperlyConfigured
 
 def parse_database_url(url):
     parsed = urllib.parse.urlparse(url)
-    if parsed.scheme not in ('mysql', 'mysql+pymysql', 'mysqlclient'):
+    if parsed.scheme not in ('mysql', 'mysql+pymysql', 'mysqlclient', 'mysql+mysqlclient'):
         raise ImproperlyConfigured(
-            'DATABASE_URL must use mysql://, mysql+pymysql://, or mysqlclient:// scheme.'
+            'DATABASE_URL must use mysql://, mysql+pymysql://, mysqlclient://, or mysql+mysqlclient:// scheme.'
         )
 
     if not parsed.path or parsed.path == '/':
         raise ImproperlyConfigured('DATABASE_URL must include a database name.')
+
+    if not parsed.hostname:
+        raise ImproperlyConfigured('DATABASE_URL must include a host name.')
 
     return {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': parsed.path.lstrip('/'),
         'USER': urllib.parse.unquote(parsed.username) if parsed.username else '',
         'PASSWORD': urllib.parse.unquote(parsed.password) if parsed.password else '',
-        'HOST': parsed.hostname or '127.0.0.1',
+        'HOST': parsed.hostname,
         'PORT': str(parsed.port or 3306),
     }
 
-DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL')
+DATABASE_URL = (
+    os.environ.get('DATABASE_URL')
+    or os.environ.get('MYSQL_URL')
+    or os.environ.get('RAILWAY_DATABASE_URL')
+    or os.environ.get('RAILWAY_MYSQL_URL')
+)
 if DATABASE_URL:
     database_config = parse_database_url(DATABASE_URL)
 else:
@@ -121,24 +129,21 @@ else:
         'PORT': os.environ.get('DB_PORT', os.environ.get('MYSQL_PORT', '3306')),
     }
 
+required_database_fields = {
+    'DATABASE_URL or MYSQL_URL or RAILWAY_DATABASE_URL or RAILWAY_MYSQL_URL': DATABASE_URL,
+    'DB_NAME or MYSQL_DATABASE': database_config['NAME'],
+    'DB_USER or MYSQL_USER': database_config['USER'],
+    'DB_PASSWORD or MYSQL_PASSWORD': database_config['PASSWORD'],
+    'DB_HOST or MYSQL_HOST': database_config['HOST'],
+}
+
 if not DEBUG:
-    missing = [
-        key for key, value in {
-            'DATABASE_URL or MYSQL_URL': DATABASE_URL,
-            'DB_NAME or MYSQL_DATABASE': database_config['NAME'],
-            'DB_USER or MYSQL_USER': database_config['USER'],
-            'DB_PASSWORD or MYSQL_PASSWORD': database_config['PASSWORD'],
-            'DB_HOST or MYSQL_HOST': database_config['HOST'],
-        }.items()
-        if not value
-    ]
+    missing = [key for key, value in required_database_fields.items() if not value]
     if missing:
         raise ImproperlyConfigured(
             'Missing required database environment variables: ' + ', '.join(missing)
         )
 
-if not database_config['HOST']:
-    database_config['HOST'] = '127.0.0.1'
 if not database_config['PORT']:
     database_config['PORT'] = '3306'
 
