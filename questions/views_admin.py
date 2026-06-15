@@ -264,8 +264,9 @@ def question_import(request):
                 from .models import PDFUpload
 
                 pdf_path = csv_to_pdf(csv_temp.name)
+                # Use the uploaded CSV filename (csv_file) to name the generated PDF
                 pdf_record = PDFUpload.objects.create(
-                    original_filename=f"{upload.name.rsplit('.', 1)[0]}.pdf",
+                    original_filename=f"{csv_file.name.rsplit('.', 1)[0]}.pdf",
                     uploaded_by=request.user if hasattr(request, 'user') and request.user.is_authenticated else None
                 )
                 pdf_record.file.name = os.path.relpath(pdf_path, getattr(settings, 'MEDIA_ROOT', os.path.join(settings.BASE_DIR, 'media')))

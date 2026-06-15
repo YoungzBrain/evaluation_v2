@@ -1,0 +1,47 @@
+text,type,is_active
+ENSEIGNANTS PAR LES,scored,1
+ÉTUDIANTS,scored,1
+Départements/Departments,scored,1
+Level / Niveau,scored,1
+Name of lecturer and grade / Name of lecturer and grade,scored,1
+Subject and code / Unité d’enseignement et code,scored,1
+General / Générale,scored,1
+Evaluation / Evaluation,scored,1
+Continuous assessments (CC),scored,1
+Written Exams,scored,1
+Written Exams and Continuous assessments (CC) / Contrôles continus,scored,1
+(CC) et Examens,scored,1
+Written Exams and Continuous assessments (CC) /,open,1
+Contrôles continus (CC) et Examens,scored,1
+Quality in course work / Qualité dans le cours,scored,1
+Has the course enhanced your knowledge ? /,open,1
+Le cours a-t-il amélioré vos connaissances ?,open,1
+Has the course empowered you to take up any known research or job ?,open,1
+Le cours vous a-t-il permis d'entreprendre toute recherche ou,scored,1
+opportunité d'emploi connue ?,open,1
+Can you create any job with what you have learnt ? /,open,1
+Pouvez-vous créer n'importe quel emploi avec ce que vous,scored,1
+avez appris ?,open,1
+Do you see the course with opening or market opportunities in the,scored,1
+future ? /,open,1
+Voyez-vous le cours avec des opportunités d'ouverture ou de marché à,scored,1
+l'avenir ?,open,1
+"Can you transfer the knowledge in any phase (e.g teaching, research",scored,1
+"community development, etc) in life ? /",open,1
+Pouvez-vous transférer les connaissances à n'importe quelle phase,scored,1
+"(par exemple, l'enseignement, de recherche, le développement de la",scored,1
+"communauté, etc.) de la vie ?",open,1
+Was there any dynamic in the teaching ? /,open,1
+Y avait-il une dynamique dans l'enseignement ?,open,1
+"Does the teaching give time for reflection, distraction and thinking ? /",open,1
+"L'enseignement donne-t-il du temps pour la réflexion, la",scored,1
+distraction et la réflexion ?,open,1
+Was the study course program design in such a way you can,scored,1
+remember facts ? /,open,1
+Le programme d'études a-t-il été conçu de manière à ce que,scored,1
+vous puissiez vous souvenir des faits ?,open,1
+General comments if any / Appréciation générale sur l’enseignant,open,1
+Positive / Aspects positifs,open,1
+Negative /,open,1
+Aspects négatif,scored,1
+Any suggestion / Autres suggestions,open,1

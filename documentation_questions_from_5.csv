@@ -1,0 +1,13 @@
+text,type,is_active
+"Has the course enhanced your knowledge?",open,1
+"Has the course empowered you to take up any known research or job?",open,1
+"Can you create any job with what you have learnt?",open,1
+"Do you see the course with opening or market opportunities in the future?",open,1
+"Can you transfer the knowledge in any phase (e.g teaching, research, community development, etc.) in life?",open,1
+"Was there any dynamic in the teaching?",open,1
+"Does the teaching give time for reflection, distraction and thinking?",open,1
+"Was the study course program designed in such a way you can remember facts?",open,1
+"General comments if any",open,1
+"Positive",open,1
+"Negative",open,1
+"Any suggestion",open,1
