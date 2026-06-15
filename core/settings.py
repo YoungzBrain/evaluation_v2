@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
+import urllib.parse
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+y7zvpj075j2q*^s#yu113s^#83&o86t6lgc%8bk8i$j26a&8n'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-+y7zvpj075j2q*^s#yu113s^#83&o86t6lgc%8bk8i$j26a&8n')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = []
+raw_allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '*')
+ALLOWED_HOSTS = [host.strip() for host in raw_allowed_hosts.split(',') if host.strip()]
 
 
 # Application definition
@@ -75,21 +78,44 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+def parse_database_url(url):
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in ('mysql', 'mysql+pymysql', 'mysqlclient'):
+        return None
+
+    return {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'evaluation_v2',
-        'USER': 'root',
-        'PASSWORD': 'Str1pp1d.',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': parsed.path.lstrip('/'),
+        'USER': urllib.parse.unquote(parsed.username) if parsed.username else '',
+        'PASSWORD': urllib.parse.unquote(parsed.password) if parsed.password else '',
+        'HOST': parsed.hostname or '127.0.0.1',
+        'PORT': str(parsed.port or 3306),
     }
+
+DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL')
+if DATABASE_URL:
+    database_config = parse_database_url(DATABASE_URL)
+else:
+    database_config = {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', os.environ.get('MYSQL_DATABASE', 'evaluation_v2')),
+        'USER': os.environ.get('DB_USER', os.environ.get('MYSQL_USER', 'root')),
+        'PASSWORD': os.environ.get('DB_PASSWORD', os.environ.get('MYSQL_PASSWORD', 'Str1pp1d.')),
+        'HOST': os.environ.get('DB_HOST', os.environ.get('MYSQL_HOST', '127.0.0.1')),
+        'PORT': os.environ.get('DB_PORT', os.environ.get('MYSQL_PORT', '3306')),
+    }
+
+DATABASES = {
+    'default': database_config,
 }
 
 
