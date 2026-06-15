@@ -122,19 +122,39 @@ if DATABASE_URL:
 else:
     database_config = {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', os.environ.get('MYSQL_DATABASE', '')),
-        'USER': os.environ.get('DB_USER', os.environ.get('MYSQL_USER', '')),
-        'PASSWORD': os.environ.get('DB_PASSWORD', os.environ.get('MYSQL_PASSWORD', '')),
-        'HOST': os.environ.get('DB_HOST', os.environ.get('MYSQL_HOST', '')),
-        'PORT': os.environ.get('DB_PORT', os.environ.get('MYSQL_PORT', '3306')),
+        'NAME': (
+            os.environ.get('DB_NAME')
+            or os.environ.get('MYSQL_DATABASE')
+            or os.environ.get('RAILWAY_MYSQL_DATABASE', '')
+        ),
+        'USER': (
+            os.environ.get('DB_USER')
+            or os.environ.get('MYSQL_USER')
+            or os.environ.get('RAILWAY_MYSQL_USER', '')
+        ),
+        'PASSWORD': (
+            os.environ.get('DB_PASSWORD')
+            or os.environ.get('MYSQL_PASSWORD')
+            or os.environ.get('RAILWAY_MYSQL_PASSWORD', '')
+        ),
+        'HOST': (
+            os.environ.get('DB_HOST')
+            or os.environ.get('MYSQL_HOST')
+            or os.environ.get('RAILWAY_MYSQL_HOST', '')
+        ),
+        'PORT': (
+            os.environ.get('DB_PORT')
+            or os.environ.get('MYSQL_PORT')
+            or os.environ.get('RAILWAY_MYSQL_PORT', '3306')
+        ),
     }
 
 required_database_fields = {
     'DATABASE_URL or MYSQL_URL or RAILWAY_DATABASE_URL or RAILWAY_MYSQL_URL': DATABASE_URL,
-    'DB_NAME or MYSQL_DATABASE': database_config['NAME'],
-    'DB_USER or MYSQL_USER': database_config['USER'],
-    'DB_PASSWORD or MYSQL_PASSWORD': database_config['PASSWORD'],
-    'DB_HOST or MYSQL_HOST': database_config['HOST'],
+    'DB_NAME or MYSQL_DATABASE or RAILWAY_MYSQL_DATABASE': database_config['NAME'],
+    'DB_USER or MYSQL_USER or RAILWAY_MYSQL_USER': database_config['USER'],
+    'DB_PASSWORD or MYSQL_PASSWORD or RAILWAY_MYSQL_PASSWORD': database_config['PASSWORD'],
+    'DB_HOST or MYSQL_HOST or RAILWAY_MYSQL_HOST': database_config['HOST'],
 }
 
 if not DEBUG:
