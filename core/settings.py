@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import sys
 import urllib.parse
 from pathlib import Path
 
@@ -25,7 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-+y7zvpj075j2q*^s#yu113s^#83&o86t6lgc%8bk8i$j26a&8n')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in ('1', 'true', 'yes')
+# Enable DEBUG for local development so static files are served by Django.
+# In production, set DJANGO_DEBUG=False via environment variable.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
 raw_allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '*')
 ALLOWED_HOSTS = [host.strip() for host in raw_allowed_hosts.split(',') if host.strip()]
@@ -133,8 +136,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# URL prefix for static files. Include a leading slash so URLs are absolute.
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+# Directory where `collectstatic` will collect static files for production.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 LOGIN_URL          = '/login/'

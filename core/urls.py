@@ -11,6 +11,7 @@ urlpatterns = [
     path('',              include('evaluations.urls')),  # Module 5 — evaluations
 ]
 
-# Servir les fichiers media en développement
+# Servir les fichiers statiques et media en développement
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,46 @@
+text,type,is_active
+"Attendance in course",scored,1
+"Student attentiveness during lessons",scored,1
+"Punctuality to class",scored,1
+"Dressing code",scored,1
+"Pedagogical approach",scored,1
+"Relationship with students",scored,1
+"Mastery of the course",scored,1
+"Student-lecturer interaction",scored,1
+"Integration of ICTs (projector, etc.)",scored,1
+"Organization and follow-up of TP/TPE/TD",scored,1
+"Course transmission capacity",scored,1
+"Detailed course plan presented at first session",scored,1
+"The objective of each topic was given",scored,1
+"Application of the course in the industrial world was explained",scored,1
+"Course syllabus/modules were made available",scored,1
+"Programmed coverage rate of the syllabus",scored,1
+"Delivery of course content and syllabus",scored,1
+"Continuous assessments conform to coursework",scored,1
+"Marks allocated for continuous assessments",scored,1
+"Corrections were done for continuous assessments",scored,1
+"Copies were returned to students after corrections",scored,1
+"TPE conforms to coursework",scored,1
+"Marks allocated for TPE",scored,1
+"Corrections were done for TPE",scored,1
+"Copies were returned to students for TPE",scored,1
+"Written exams conform to coursework",scored,1
+"Marks allocated for written exams",scored,1
+"Corrections were done for written exams",scored,1
+"Copies were returned to students for written exams",scored,1
+"Exam supervision was appropriate",scored,1
+"Clarity of questions and grading scale",scored,1
+"Exam duration was sufficient",scored,1
+"Grading objectivity was appropriate",scored,1
+"The course enhanced your knowledge",scored,1
+"The course empowered you to take up research or job opportunities",scored,1
+"You can create a job using what you have learned",scored,1
+"You foresee future market or career opportunities from this course",scored,1
+"You can transfer this knowledge to other areas of life",scored,1
+"There was a dynamic in the teaching",scored,1
+"The teaching workflow allowed active reflection and critical thinking",scored,1
+"The course curriculum was designed to help you retain key facts easily",scored,1
+"General comments",open,1
+"Positive aspects",open,1
+"Negative aspects",open,1
+"Suggestions",open,1

@@ -230,10 +230,11 @@ def public_ranking(request):
     ranking_data = []
     for dept in departments:
         # Teachers who have at least 1 submitted evaluation in this department
+        # Find teachers via their course evaluations (not just department profile).
         teachers_with_evals = User.objects.filter(
             role='teacher',
             is_active=True,
-            teacher_profile__departments=dept,
+            evaluations_as_teacher__course__department=dept,
             evaluations_as_teacher__status='submitted',
         ).distinct()
 
